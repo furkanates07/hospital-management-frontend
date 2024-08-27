@@ -1,3 +1,5 @@
-export { CreatePatientDto } from "./createPatientDto.interface";
-export { EmergencyContact } from "./emergencyContact.interface";
-export { LoginDto } from "./loginDto.interface";
+export { EmergencyContact } from "./emergency-contact.interface";
+export { Login } from "./login.interface";
+export { PatientConditions } from "./patient-conditions.interface";
+export { PatientDetails } from "./patient-details.interface";
+export { Patient } from "./patient.interface";

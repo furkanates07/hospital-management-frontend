@@ -1,6 +1,7 @@
-import { Role } from "../enums/role.enum";
+import { Role } from "@/enums/role.enum";
+import { EmergencyContact } from "./emergency-contact.interface";
 
-export interface CreatePatientDto {
+export interface Patient {
   name: string;
   email: string;
   password: string;
@@ -8,8 +9,8 @@ export interface CreatePatientDto {
   dateOfBirth: string;
   gender: string;
   address?: string;
-  role?: Role;
-  emergencyContact?: [];
+  role?: Role.PATIENT;
+  emergencyContact?: EmergencyContact[];
   medicalHistory?: string[];
   allergies?: string[];
   chronicConditions?: string[];
