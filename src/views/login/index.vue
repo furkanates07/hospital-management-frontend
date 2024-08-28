@@ -94,7 +94,6 @@ import { ref } from "vue";
 
 const { login, error } = useAuth();
 
-const loginData = ref<LoginDto>({
 const loginData = ref<Login>({
   email: "",
   password: "",
