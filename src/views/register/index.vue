@@ -12,7 +12,7 @@
 
       <div class="mb-6">
         <label for="name" class="block text-teal-500 text-sm font-bold mb-2">
-          Name
+          Full Name
         </label>
         <input
           v-model="registerData.name"
@@ -145,14 +145,14 @@
 
 <script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
-import { CreatePatientDto } from "@/interfaces/createPatientDto.interface";
+import { Patient } from "@/interfaces/index";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const { registerPatient, error } = useAuth();
 const router = useRouter();
 
-const registerData = ref<CreatePatientDto>({
+const registerData = ref<Patient>({
   name: "",
   email: "",
   password: "",
