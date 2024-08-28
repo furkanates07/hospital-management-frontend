@@ -91,9 +91,10 @@ import { useAuth } from "@/composables/useAuth";
 import { Role } from "@/enums/role.enum";
 import { Login } from "@/interfaces/login.interface";
 import router from "@/router";
+import { usePatientStore } from "@/stores/patient";
 import { ref } from "vue";
 
-const { login, error } = useAuth();
+const { login, error, userId } = useAuth();
 
 const loginData = ref<Login>({
   email: "",
@@ -101,13 +102,20 @@ const loginData = ref<Login>({
 });
 const role = ref<Role.DOCTOR | Role.PATIENT>(Role.PATIENT);
 
+const patientStore = usePatientStore();
+
 const handleLogin = async () => {
   if (role.value === Role.DOCTOR) {
     await login(loginData.value, Role.DOCTOR);
     router.push("/doctor");
   } else {
-    router.push("/patient");
     await login(loginData.value, Role.PATIENT);
+
+    if (userId.value !== null) {
+      await patientStore.fetchPatient(userId.value);
+    }
+
+    router.push(`/patient/${userId.value}`);
   }
 };
 </script>
