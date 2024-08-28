@@ -88,7 +88,6 @@
 
 <script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
-import { LoginDto } from "@/interfaces/loginDto.interface";
 import { Login } from "@/interfaces/login.interface";
 import router from "@/router";
 import { ref } from "vue";
