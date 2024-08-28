@@ -48,7 +48,7 @@
                   ? 'bg-teal-500 text-white'
                   : 'bg-white text-gray-700',
               ]"
-              @click="role = 'patient'"
+              @click="role = Role.PATIENT"
             >
               Patient
             </button>
@@ -60,7 +60,7 @@
                   ? 'bg-teal-500 text-white'
                   : 'bg-white text-gray-700',
               ]"
-              @click="role = 'doctor'"
+              @click="role = Role.DOCTOR"
             >
               Doctor
             </button>
@@ -89,12 +89,14 @@
 <script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
 import { LoginDto } from "@/interfaces/loginDto.interface";
+import { Login } from "@/interfaces/login.interface";
 import router from "@/router";
 import { ref } from "vue";
 
 const { login, error } = useAuth();
 
 const loginData = ref<LoginDto>({
+const loginData = ref<Login>({
   email: "",
   password: "",
 });
