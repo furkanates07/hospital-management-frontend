@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
+import { Role } from "@/enums/role.enum";
 import { Login } from "@/interfaces/login.interface";
 import router from "@/router";
 import { ref } from "vue";
@@ -98,15 +99,15 @@ const loginData = ref<Login>({
   email: "",
   password: "",
 });
-const role = ref<"doctor" | "patient">("patient");
+const role = ref<Role.DOCTOR | Role.PATIENT>(Role.PATIENT);
 
 const handleLogin = async () => {
-  if (role.value === "doctor") {
-    await login(loginData.value, "doctor");
+  if (role.value === Role.DOCTOR) {
+    await login(loginData.value, Role.DOCTOR);
     router.push("/doctor");
   } else {
-    await login(loginData.value, "patient");
     router.push("/patient");
+    await login(loginData.value, Role.PATIENT);
   }
 };
 </script>
