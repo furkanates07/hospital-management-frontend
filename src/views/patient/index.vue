@@ -30,6 +30,7 @@
 import Appointments from "@/components/ui/patient/Appointments.vue";
 import Home from "@/components/ui/patient/Home.vue";
 import MedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
+import Profile from "@/components/ui/patient/Profile.vue";
 import { useAuth } from "@/composables/useAuth";
 import { usePatientStore } from "@/stores/patient";
 import { computed, ref } from "vue";
@@ -39,6 +40,7 @@ const tabs = [
   { name: "Home", key: "home", icon: "home" },
   { name: "Appointments", key: "appointments", icon: "calendar_month" },
   { name: "Medical Records", key: "medical-records", icon: "folder" },
+  { name: "Profile", key: "profile", icon: "person" },
   { name: "Logout", key: "logout", icon: "logout" },
 ];
 
@@ -55,6 +57,8 @@ const activeComponent = computed(() => {
       return Appointments;
     case "medical-records":
       return MedicalRecords;
+    case "profile":
+      return Profile;
     case "logout":
       return null;
     default:
