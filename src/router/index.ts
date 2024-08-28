@@ -9,7 +9,7 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/doctor", component: DoctorView },
-  { path: "/patient", component: PatientView },
+  { path: "/patient/:id", component: PatientView },
 ];
 
 const router = createRouter({
