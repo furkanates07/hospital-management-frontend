@@ -1,5 +1,5 @@
 import { Role } from "@/enums/role.enum";
-import { EmergencyContact } from "./emergency-contact.interface";
+import { EmergencyContact } from "../emergency-contact.interface";
 
 export interface Patient {
   name: string;
