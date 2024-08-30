@@ -9,4 +9,7 @@ export interface PatientDetails {
   gender?: string;
   address?: string;
   emergencyContact?: EmergencyContact[];
+  medicalHistory?: string[];
+  allergies?: string[];
+  chronicConditions?: string[];
 }
