@@ -6,6 +6,7 @@ export const usePatientStore = defineStore("patient", {
   state: () => ({
     patient: {} as Patient,
     loading: false,
+    userID: "",
     error: "",
   }),
 
@@ -16,9 +17,16 @@ export const usePatientStore = defineStore("patient", {
     getPatientFullName(): string {
       return this.patient.name;
     },
+    getUserID(): string {
+      return this.userID;
+    },
   },
 
   actions: {
+    async setUserID(id: string) {
+      this.userID = id;
+    },
+
     async fetchPatient(id: string) {
       this.loading = true;
       try {

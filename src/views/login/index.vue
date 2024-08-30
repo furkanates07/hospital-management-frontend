@@ -113,6 +113,7 @@ const handleLogin = async () => {
 
     if (userId.value !== null) {
       await patientStore.fetchPatient(userId.value);
+      patientStore.setUserID(userId.value);
     }
 
     router.push(`/patient/${userId.value}`);
