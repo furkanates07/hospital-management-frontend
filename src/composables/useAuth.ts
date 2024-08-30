@@ -48,10 +48,6 @@ export function useAuth() {
     localStorage.removeItem("access_token");
     token.value = null;
     userId.value = null;
-
-    console.log("Logged out");
-    console.log("Token:", token.value);
-    console.log("User ID:", userId.value);
   };
 
   return {
