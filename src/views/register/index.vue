@@ -130,8 +130,11 @@
       >
         Register
       </button>
-      <p v-if="error" class="mt-4 text-red-500 text-center text-sm">
-        {{ error }}
+      <p
+        v-if="authStore.getError"
+        class="mt-4 text-red-500 text-center text-sm"
+      >
+        {{ authStore.getError }}
       </p>
       <router-link
         to="/login"
@@ -144,12 +147,12 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from "@/composables/useAuth";
 import { Patient } from "@/interfaces/index";
+import { useAuthStore } from "@/stores/auth";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-const { registerPatient, error } = useAuth();
+const authStore = useAuthStore();
 const router = useRouter();
 
 const registerData = ref<Patient>({
@@ -163,10 +166,12 @@ const registerData = ref<Patient>({
 
 const handleRegister = async () => {
   try {
-    await registerPatient(registerData.value);
+    await authStore.registerPatient(registerData.value);
     router.push("/login");
   } catch (err: any) {
-    error.value = err.message;
+    authStore.error = err.message;
   }
 };
 </script>
+
+<style scoped></style>

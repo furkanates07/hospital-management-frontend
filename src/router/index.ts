@@ -1,15 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import DoctorView from "../views/doctor/index.vue";
+import Home from "../views/home/index.vue";
 import LoginView from "../views/login/index.vue";
-import PatientView from "../views/patient/index.vue";
 import RegisterView from "../views/register/index.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
-  { path: "/doctor", component: DoctorView },
-  { path: "/patient/:id", component: PatientView },
+  { path: "/home/:id", component: Home },
 ];
 
 const router = createRouter({

@@ -72,8 +72,11 @@
         >
           Login
         </button>
-        <p v-if="error" class="mt-4 text-red-500 text-center text-sm">
-          {{ error }}
+        <p
+          v-if="authStore.getError"
+          class="mt-4 text-red-500 text-center text-sm"
+        >
+          {{ authStore.getError }}
         </p>
         <router-link
           to="/register"
@@ -87,15 +90,15 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from "@/composables/useAuth";
 import { Role } from "@/enums/role.enum";
 import { Login } from "@/interfaces/login.interface";
 import router from "@/router";
+import { useAuthStore } from "@/stores/auth";
+import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
 import { ref } from "vue";
 
-const { login, error, userId } = useAuth();
-
+const authStore = useAuthStore();
 const loginData = ref<Login>({
   email: "",
   password: "",
@@ -103,20 +106,30 @@ const loginData = ref<Login>({
 const role = ref<Role.DOCTOR | Role.PATIENT>(Role.PATIENT);
 
 const patientStore = usePatientStore();
+const doctorStore = useDoctorStore();
 
 const handleLogin = async () => {
   if (role.value === Role.DOCTOR) {
-    await login(loginData.value, Role.DOCTOR);
-    router.push("/doctor");
-  } else {
-    await login(loginData.value, Role.PATIENT);
+    await authStore.login(loginData.value, Role.DOCTOR);
 
-    if (userId.value !== null) {
-      await patientStore.fetchPatient(userId.value);
-      patientStore.setUserID(userId.value);
+    if (authStore.userId !== null) {
+      await doctorStore.fetchDoctor(authStore.userId);
+      doctorStore.setUserID(authStore.userId);
     }
 
-    router.push(`/patient/${userId.value}`);
+    if (authStore.isAuth) {
+      router.push(`/home/${authStore.userId}`);
+    }
+  } else {
+    await authStore.login(loginData.value, Role.PATIENT);
+
+    if (authStore.userId !== null) {
+      await patientStore.fetchPatient(authStore.userId);
+      patientStore.setUserID(authStore.userId);
+    }
+    if (authStore.isAuth) {
+      router.push(`/home/${authStore.userId}`);
+    }
   }
 };
 </script>

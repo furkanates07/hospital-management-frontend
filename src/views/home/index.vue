@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="w-64 bg-teal-500 text-white fixed h-full">
       <div class="p-4 font-bold text-lg flex justify-center">
-        <span>{{ patientStore.getPatientFullName }}</span>
+        <span>{{ fullName }}</span>
       </div>
       <div
         v-for="tab in tabs"
@@ -31,23 +31,34 @@ import Appointments from "@/components/ui/patient/Appointments.vue";
 import Home from "@/components/ui/patient/Home.vue";
 import MedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
 import Profile from "@/components/ui/patient/Profile.vue";
-import { useAuth } from "@/composables/useAuth";
+import { useAuthStore } from "@/stores/auth";
+import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
-const tabs = [
-  { name: "Home", key: "home", icon: "home" },
-  { name: "Appointments", key: "appointments", icon: "calendar_month" },
-  { name: "Medical Records", key: "medical-records", icon: "folder" },
-  { name: "Profile", key: "profile", icon: "person" },
-  { name: "Logout", key: "logout", icon: "logout" },
-];
-
+const authStore = useAuthStore();
 const selectedTab = ref("");
 const router = useRouter();
-const { logout } = useAuth();
 const patientStore = usePatientStore();
+const doctorStore = useDoctorStore();
+
+const tabs = ref(
+  authStore.role === "doctor"
+    ? [
+        { name: "Home", key: "home", icon: "home" },
+        { name: "Appointments", key: "appointments", icon: "calendar_month" },
+        { name: "Profile", key: "profile", icon: "person" },
+        { name: "Logout", key: "logout", icon: "logout" },
+      ]
+    : [
+        { name: "Home", key: "home", icon: "home" },
+        { name: "Appointments", key: "appointments", icon: "calendar_month" },
+        { name: "Medical Records", key: "medical-records", icon: "folder" },
+        { name: "Profile", key: "profile", icon: "person" },
+        { name: "Logout", key: "logout", icon: "logout" },
+      ]
+);
 
 const activeComponent = computed(() => {
   switch (selectedTab.value) {
@@ -66,9 +77,17 @@ const activeComponent = computed(() => {
   }
 });
 
+const fullName = computed(() => {
+  if (authStore.role === "doctor") {
+    return doctorStore.getDoctorFullName;
+  } else {
+    return patientStore.getPatientFullName;
+  }
+});
+
 const handleTabChange = (key: string) => {
   if (key === "logout") {
-    logout();
+    authStore.logout();
     router.push("/login");
   } else {
     selectedTab.value = key;
