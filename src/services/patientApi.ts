@@ -15,7 +15,8 @@ export default {
   },
 
   updatePatientDetails(id: string, data: PatientDetails) {
-    return apiClient.put(`/patients/${id}`, data);
+    console.log("API Call: Updating patient details", id, data);
+    return apiClient.patch(`/patients/${id}`, data);
   },
 
   updatePatientConditions(id: string, data: PatientConditions) {
