@@ -40,7 +40,7 @@
           }"
           class="py-2 px-4 font-semibold"
         >
-          Patient Profile
+          Details
         </button>
         <button
           @click="activeTab = 'contacts'"
@@ -249,6 +249,7 @@ const cancelChanges = (): void => {
     const fieldKey = key as keyof PatientDetailsFields;
     editableFields.value[fieldKey] = patientDetails.value[fieldKey];
   });
+  patientStore.fetchPatient(userID);
 };
 
 const startAddingNewContact = (): void => {
