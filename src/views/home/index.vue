@@ -27,10 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import Appointments from "@/components/ui/patient/Appointments.vue";
-import Home from "@/components/ui/patient/Home.vue";
-import MedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
-import Profile from "@/components/ui/patient/Profile.vue";
+import DoctorAppointments from "@/components/ui/doctor/Appointments.vue";
+import DoctorHome from "@/components/ui/doctor/Home.vue";
+import DoctorProfile from "@/components/ui/doctor/Profile.vue";
+import PatientAppointments from "@/components/ui/patient/Appointments.vue";
+import PatientHome from "@/components/ui/patient/Home.vue";
+import PatientMedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
+import PatientProfile from "@/components/ui/patient/Profile.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
@@ -63,17 +66,19 @@ const tabs = ref(
 const activeComponent = computed(() => {
   switch (selectedTab.value) {
     case "home":
-      return Home;
+      return authStore.role === "doctor" ? DoctorHome : PatientHome;
     case "appointments":
-      return Appointments;
+      return authStore.role === "doctor"
+        ? DoctorAppointments
+        : PatientAppointments;
     case "medical-records":
-      return MedicalRecords;
+      return PatientMedicalRecords;
     case "profile":
-      return Profile;
+      return authStore.role === "doctor" ? DoctorProfile : PatientProfile;
     case "logout":
       return null;
     default:
-      return Home;
+      return authStore.role === "doctor" ? DoctorHome : PatientHome;
   }
 });
 
