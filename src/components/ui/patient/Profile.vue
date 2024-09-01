@@ -173,9 +173,6 @@ interface PatientDetailsFields {
   "Date of Birth": string;
   Gender: string;
   Address: string;
-  "Medical History": string;
-  Allergies: string;
-  "Chronic Conditions": string;
 }
 
 const patientStore = usePatientStore();
@@ -195,9 +192,6 @@ const patientDetails = computed<PatientDetailsFields>(() => ({
   "Date of Birth": formatDate(patient.value.dateOfBirth),
   Gender: patient.value.gender,
   Address: patient.value.address || "",
-  "Medical History": patient.value.medicalHistory?.join(", ") || "",
-  Allergies: patient.value.allergies?.join(", ") || "",
-  "Chronic Conditions": patient.value.chronicConditions?.join(", ") || "",
 }));
 
 const isEditing = ref(false);
