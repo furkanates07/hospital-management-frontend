@@ -59,6 +59,7 @@ export const useDoctorStore = defineStore("doctor", {
       this.loading = true;
       try {
         await doctorApi.deleteDoctor(id);
+        this.doctor = {} as Doctor;
         console.log("Doctor deleted successfully");
       } catch (error: any) {
         console.error("API Error:", error);
