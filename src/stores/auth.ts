@@ -1,5 +1,6 @@
 import { Role } from "@/enums/role.enum";
 import { Login, Patient } from "@/interfaces/index";
+import { setAuthToken } from "@/services/apiClient";
 import authApi from "@/services/authApi";
 import { defineStore } from "pinia";
 
@@ -30,6 +31,7 @@ export const useAuthStore = defineStore("auth", {
         if (response.data.access_token) {
           this.token = response.data.access_token;
           localStorage.setItem("access_token", this.token ?? "");
+          setAuthToken();
           this.userId = response.data.userId;
           this.role = loginRole;
 
@@ -60,6 +62,7 @@ export const useAuthStore = defineStore("auth", {
 
     logout() {
       localStorage.removeItem("access_token");
+      setAuthToken();
       this.token = null;
       this.userId = null;
       this.role = null;
