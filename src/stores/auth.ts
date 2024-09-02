@@ -34,10 +34,6 @@ export const useAuthStore = defineStore("auth", {
           setAuthToken();
           this.userId = response.data.userId;
           this.role = loginRole;
-
-          console.log("Token:", this.token);
-          console.log("User ID:", this.userId);
-          console.log("Role:", this.role);
         }
         this.error = null;
       } catch (err: any) {
