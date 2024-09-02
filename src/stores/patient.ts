@@ -1,4 +1,6 @@
 import { Patient, PatientConditions, PatientDetails } from "@/interfaces";
+import { Appointment } from "@/interfaces/appointment";
+import appointmentApi from "@/services/appointmentApi";
 import patientApi from "@/services/patientApi";
 import { defineStore } from "pinia";
 
@@ -8,6 +10,7 @@ export const usePatientStore = defineStore("patient", {
     loading: false,
     userID: "",
     error: "",
+    appointments: [] as Appointment[],
   }),
 
   getters: {
@@ -19,6 +22,9 @@ export const usePatientStore = defineStore("patient", {
     },
     getUserID(): string {
       return this.userID;
+    },
+    getAppointments(): Appointment[] {
+      return this.appointments;
     },
   },
 
@@ -50,6 +56,7 @@ export const usePatientStore = defineStore("patient", {
       } catch (error: any) {
         console.error("API Error:", error);
         this.error = error.message;
+        console.error("API Error:", error);
       } finally {
         this.loading = false;
       }
@@ -72,6 +79,19 @@ export const usePatientStore = defineStore("patient", {
       try {
         await patientApi.deletePatient(id);
         this.patient = {} as Patient;
+      } catch (error: any) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchAppointments(id: string) {
+      this.loading = true;
+      try {
+        const response = await appointmentApi.getAppointmentsByPatientId(id);
+        this.appointments = response.data;
+        console.log(this.appointments);
       } catch (error: any) {
         this.error = error.message;
       } finally {
