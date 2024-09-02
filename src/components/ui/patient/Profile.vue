@@ -111,7 +111,7 @@
 
         <!-- Add New Contact Form -->
         <div
-          v-if="isEditing && isAddingNewContact"
+          v-if="isAddingNewContact"
           class="bg-white p-4 rounded-lg shadow-md mt-4"
         >
           <h3 class="text-lg font-semibold text-teal-500 mb-2">
@@ -134,28 +134,31 @@
                 required
               />
             </div>
-            <button
-              type="submit"
-              class="mt-2 bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
-            >
-              Add Contact
-            </button>
-            <button
-              @click="cancelNewContact"
-              type="button"
-              class="mt-2 bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2"
-            >
-              Cancel
-            </button>
+            <div class="flex justify-end flex-row">
+              <button
+                type="submit"
+                class="mt-2 bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
+              >
+                Add Contact
+              </button>
+              <button
+                @click="cancelNewContact"
+                type="button"
+                class="mt-2 bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2"
+              >
+                Cancel
+              </button>
+            </div>
           </form>
         </div>
-        <button
-          v-if="isEditing && !isAddingNewContact"
-          @click="startAddingNewContact"
-          class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 mt-4"
-        >
-          Add New Contact
-        </button>
+        <div v-if="!isAddingNewContact" class="flex justify-center">
+          <button
+            @click="startAddingNewContact"
+            class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 mt-4"
+          >
+            Add New Contact
+          </button>
+        </div>
       </div>
     </div>
   </div>
