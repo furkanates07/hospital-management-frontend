@@ -38,7 +38,6 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.getPatientById(id);
         this.patient = response.data;
-        console.log(this.patient);
       } catch (error: any) {
         this.error = error.message;
       } finally {
@@ -50,11 +49,8 @@ export const usePatientStore = defineStore("patient", {
       this.loading = true;
       try {
         const response = await patientApi.updatePatientDetails(id, data);
-        console.log("API Response:", response);
         this.patient = { ...this.patient, ...response.data };
-        console.log("Patient details updated successfully");
       } catch (error: any) {
-        console.error("API Error:", error);
         this.error = error.message;
         console.error("API Error:", error);
       } finally {
