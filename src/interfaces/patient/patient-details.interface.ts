@@ -1,4 +1,4 @@
-import { EmergencyContact } from "../emergency-contact.interface";
+import { EmergencyContact } from "./emergency-contact.interface";
 
 export interface PatientDetails {
   name?: string;
