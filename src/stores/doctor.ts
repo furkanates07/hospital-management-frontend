@@ -38,8 +38,7 @@ export const useDoctorStore = defineStore("doctor", {
       try {
         const response = await doctorApi.getDoctorById(id);
         this.doctor = response.data;
-        console.log(this.doctor.name);
-        return this.getDoctorFullName;
+        return this.doctor.name;
       } catch (error: any) {
         this.error = error.message;
       } finally {
