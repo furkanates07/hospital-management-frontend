@@ -1,4 +1,3 @@
-export { Days } from "./days.enum";
 export { Hours } from "./hours.enum";
 export { Role } from "./role.enum";
 export { Speciality } from "./speciality.enum";
