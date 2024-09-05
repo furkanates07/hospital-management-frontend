@@ -10,16 +10,29 @@
           v-if="appointments.length"
           v-for="appointment in appointments"
           :key="appointment.slot.day + appointment.slot.hour"
-          class="bg-white p-4 rounded-lg shadow-md mt-4"
+          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
         >
           <h2 class="text-teal-500 font-semibold mb-2">
             Appointment with Doctor:
-            {{ getDoctorName(appointment.doctorId) }}
+            {{ doctorNames[appointment.doctorId] || "Loading..." }}
           </h2>
-          <p><strong>Date:</strong> {{ formatDate(appointment.slot) }}</p>
-          <p><strong>Status:</strong> {{ appointment.status }}</p>
-          <p><strong>Reason:</strong> {{ appointment.reason }}</p>
-          <p v-if="appointment.prescription">
+          <p class="text-gray-700 mb-2">
+            <strong>Doctor's Department:</strong>
+            {{ doctorSpecialities[appointment.doctorId] || "Loading..." }}
+          </p>
+          <p class="text-gray-700 mb-2">
+            <strong>Date:</strong> {{ formatDate(appointment.slot) }}
+          </p>
+          <p class="text-gray-700 mb-2">
+            <strong>Status: </strong>
+            <span class="text-teal-600 font-bold">
+              {{ appointment.status.toUpperCase() }}
+            </span>
+          </p>
+          <p class="text-gray-700 mb-2">
+            <strong>Reason:</strong> {{ appointment.reason }}
+          </p>
+          <p v-if="appointment.prescription" class="text-gray-700 mb-2">
             <strong>Prescription:</strong> {{ appointment.prescription }}
           </p>
         </div>
@@ -32,24 +45,31 @@
 <script setup lang="ts">
 import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
 
+const doctorNames = ref<Record<string, string>>({});
+const doctorSpecialities = ref<Record<string, string>>({});
+
 onMounted(async () => {
   await patientStore.fetchAppointments(patientStore.userID);
+  fetchDoctorData();
 });
 
 const appointments = computed(() => patientStore.getAppointments);
 
 const formatDate = (slot: { day: string; hour: string }) => {
-  return `${slot.day} at ${slot.hour}`;
+  return `${slot.day.toUpperCase()} at ${slot.hour}`;
 };
 
-const getDoctorName = async (doctorId: string) => {
-  return doctorStore.fetchDoctorNamebyID(doctorId);
+const fetchDoctorData = async () => {
+  const appointmentDoctors = appointments.value.map((a) => a.doctorId);
+  for (const doctorId of new Set(appointmentDoctors)) {
+    await doctorStore.fetchDoctor(doctorId);
+    doctorNames.value[doctorId] = doctorStore.getDoctorFullName;
+    doctorSpecialities.value[doctorId] = doctorStore.getDoctorSpeciality;
+  }
 };
 </script>
-
-<style scoped></style>
