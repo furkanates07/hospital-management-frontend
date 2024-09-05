@@ -61,7 +61,7 @@
           <div
             v-for="(value, key) in patientDetails"
             :key="key"
-            class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
+            class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center border-l-4 border-teal-500"
           >
             <div class="flex-1">
               <h2 class="text-teal-500 font-semibold capitalize pl-2">
@@ -91,7 +91,7 @@
             <li
               v-for="(contact, index) in patient.emergencyContact"
               :key="index"
-              class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
+              class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center border-l-4 border-teal-500"
             >
               <div>
                 <p><strong>Name:</strong> {{ contact.name }}</p>
@@ -112,7 +112,7 @@
         <!-- Add New Contact Form -->
         <div
           v-if="isAddingNewContact"
-          class="bg-white p-4 rounded-lg shadow-md mt-4"
+          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
         >
           <h3 class="text-lg font-semibold text-teal-500 mb-2">
             Add New Contact
