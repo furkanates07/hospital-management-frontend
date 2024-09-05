@@ -20,6 +20,9 @@ export const useDoctorStore = defineStore("doctor", {
     getDoctorFullName(): string {
       return this.doctor.name;
     },
+    getDoctorSpeciality(): string {
+      return this.doctor.speciality;
+    },
     getUserID(): string {
       return this.userID;
     },
@@ -51,7 +54,7 @@ export const useDoctorStore = defineStore("doctor", {
       try {
         const response = await doctorApi.getDoctorById(id);
         this.doctor = response.data;
-        console.log(this.doctor);
+        return this.doctor;
       } catch (error: any) {
         this.error = error.message;
       } finally {
@@ -93,7 +96,7 @@ export const useDoctorStore = defineStore("doctor", {
       try {
         const response = await appointmentApi.getAppointmentsByDoctorId(id);
         this.appointments = response.data;
-        console.log(this.appointments);
+        return this.appointments;
       } catch (error: any) {
         this.error = error.message;
       } finally {
