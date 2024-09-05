@@ -9,7 +9,7 @@
         <div
           v-for="(value, key) in patientMedicalRecords"
           :key="key"
-          class="bg-white p-4 rounded-lg shadow-md mt-4"
+          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
         >
           <h2 class="text-teal-500 font-semibold mb-2">{{ key }}</h2>
           <p>{{ value || "N/A" }}</p>
@@ -32,5 +32,3 @@ const patientMedicalRecords = computed(() => ({
   "Chronic Conditions": patient.value.chronicConditions?.join(", ") || "",
 }));
 </script>
-
-<style scoped></style>
