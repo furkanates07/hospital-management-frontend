@@ -1,6 +1,6 @@
-import { Days, Hours } from "@/enums";
+import { Hours } from "@/enums";
 
 export interface Slot {
-  day: Days;
+  date: Date;
   hour: Hours;
 }

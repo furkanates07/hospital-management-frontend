@@ -9,7 +9,7 @@
         <div
           v-if="appointments.length"
           v-for="appointment in appointments"
-          :key="appointment.slot.day + appointment.slot.hour"
+          :key="appointment.slot.date + appointment.slot.hour"
           class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
         >
           <h2 class="text-teal-500 font-semibold mb-2">
@@ -60,8 +60,16 @@ onMounted(async () => {
 
 const appointments = computed(() => patientStore.getAppointments);
 
-const formatDate = (slot: { day: string; hour: string }) => {
-  return `${slot.day.toUpperCase()} at ${slot.hour}`;
+const formatDate = (slot: { date: Date; hour: string }) => {
+  const date = new Date(slot.date);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  return `${formattedDate} at ${slot.hour}`;
 };
 
 const fetchDoctorData = async () => {
