@@ -1,3 +1,4 @@
+import { Speciality } from "@/enums";
 import { Doctor, DoctorUpdate } from "@/interfaces";
 import apiClient from "./apiClient";
 
@@ -14,8 +15,11 @@ export default {
     return apiClient.get(`/doctors/${id}`);
   },
 
+  getDoctorsBySpeciality(speciality: Speciality) {
+    return apiClient.get("/doctors/speciality/" + speciality);
+  },
+
   updateDoctorDetails(id: string, data: DoctorUpdate) {
-    console.log("API Call: Updating doctor details", id, data);
     return apiClient.patch(`/doctors/${id}`, data);
   },
 
