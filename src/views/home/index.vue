@@ -1,6 +1,6 @@
 <template>
-  <div class="flex">
-    <div class="w-64 bg-teal-500 text-white fixed h-full">
+  <div class="grid grid-cols-6 h-screen">
+    <div class="col-span-1 bg-teal-500 text-white">
       <div class="p-4 font-bold text-lg flex justify-center">
         <span>{{ fullName }}</span>
       </div>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="flex-1 ml-64">
+    <div class="col-span-5">
       <component :is="activeComponent"></component>
     </div>
   </div>
@@ -34,6 +34,7 @@ import PatientAppointments from "@/components/ui/patient/Appointments.vue";
 import PatientHome from "@/components/ui/patient/Home.vue";
 import PatientMedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
 import PatientProfile from "@/components/ui/patient/Profile.vue";
+import { Role } from "@/enums";
 import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
@@ -66,24 +67,24 @@ const tabs = ref(
 const activeComponent = computed(() => {
   switch (selectedTab.value) {
     case "home":
-      return authStore.role === "doctor" ? DoctorHome : PatientHome;
+      return authStore.role === Role.DOCTOR ? DoctorHome : PatientHome;
     case "appointments":
-      return authStore.role === "doctor"
+      return authStore.role === Role.DOCTOR
         ? DoctorAppointments
         : PatientAppointments;
     case "medical-records":
       return PatientMedicalRecords;
     case "profile":
-      return authStore.role === "doctor" ? DoctorProfile : PatientProfile;
+      return authStore.role === Role.DOCTOR ? DoctorProfile : PatientProfile;
     case "logout":
       return null;
     default:
-      return authStore.role === "doctor" ? DoctorHome : PatientHome;
+      return authStore.role === Role.DOCTOR ? DoctorHome : PatientHome;
   }
 });
 
 const fullName = computed(() => {
-  if (authStore.role === "doctor") {
+  if (authStore.role === Role.DOCTOR) {
     return doctorStore.getDoctorFullName;
   } else {
     return patientStore.getPatientFullName;
