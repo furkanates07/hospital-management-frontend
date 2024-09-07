@@ -118,7 +118,7 @@ const handleLogin = async () => {
     }
 
     if (authStore.isAuth) {
-      router.push(`/home/${authStore.userId}`);
+      router.push("/home");
     }
   } else {
     await authStore.login(loginData.value, Role.PATIENT);
@@ -128,7 +128,7 @@ const handleLogin = async () => {
       patientStore.setUserID(authStore.userId);
     }
     if (authStore.isAuth) {
-      router.push(`/home/${authStore.userId}`);
+      router.push("/home");
     }
   }
 };
