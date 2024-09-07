@@ -58,13 +58,12 @@ import { onMounted, ref, watch } from "vue";
 
 const doctorsStore = useDoctorsStore();
 const doctors = ref<Doctor[]>([]);
-const specialities = Object.values(Speciality);
+const specialities = Object.values(Speciality).sort();
 const selectedSpeciality = ref<Speciality | null>(null);
 
 const fetchDoctors = async () => {
   await doctorsStore.fetchDoctors();
   doctors.value = doctorsStore.getDoctors;
-  console.log(doctors.value);
 };
 
 const fetchDoctorsBySpeciality = async (speciality: Speciality) => {
