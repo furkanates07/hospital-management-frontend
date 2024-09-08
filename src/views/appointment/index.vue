@@ -45,6 +45,11 @@
                 weekday.
               </p>
 
+              <p v-if="isPastDate" class="text-red-500 mb-4">
+                The selected date cannot be in the past. Please select today or
+                a future date.
+              </p>
+
               <!-- Slot hour -->
               <label for="hour" class="block text-teal-500 font-semibold"
                 >Time</label
@@ -144,10 +149,11 @@ const router = useRouter();
 const doctors = ref<Doctor[]>([]);
 const selectedSpeciality = ref<Speciality | null>(null);
 const selectedDoctor = ref<Doctor | null>(null);
-const isWeekend = ref(false);
 const unavailableSlots = ref<Hours[]>([]);
 const appointmentSlot = ref<Slot>({ date: new Date(), hour: Hours.NINE });
 const appointmentReason = ref("");
+const isWeekend = ref(false);
+const isPastDate = ref(false);
 
 const specialities = Object.values(Speciality).sort();
 const hours = Object.values(Hours);
@@ -194,26 +200,38 @@ const submitAppointment = async () => {
 
 const validateWeekdayandFetchAppointments = async () => {
   const selectedDate = new Date(appointmentSlot.value.date);
+  const today = new Date();
+
+  isWeekend.value = false;
+  isPastDate.value = false;
+
+  if (selectedDate < today) {
+    isPastDate.value = true;
+    appointmentSlot.value.date = today;
+    return;
+  }
+
   const day = selectedDate.getUTCDay();
 
   if (day === 0 || day === 6) {
     isWeekend.value = true;
-    appointmentSlot.value.date = new Date();
-  } else {
-    isWeekend.value = false;
-    const appointments = await doctorStore.fetchAppointments(
-      doctorStore.getUserID
-    );
+    appointmentSlot.value.date = today;
+    return;
+  }
 
-    if (appointments) {
-      unavailableSlots.value = appointments
-        .filter(
-          (appointment: { slot: { date: string | number | Date } }) =>
-            new Date(appointment.slot.date).toDateString() ===
-            new Date(appointmentSlot.value.date).toDateString()
-        )
-        .map((appointment: { slot: { hour: Hours } }) => appointment.slot.hour);
-    }
+  isWeekend.value = false;
+  const appointments = await doctorStore.fetchAppointments(
+    doctorStore.getUserID
+  );
+
+  if (appointments) {
+    unavailableSlots.value = appointments
+      .filter(
+        (appointment: { slot: { date: string | number | Date } }) =>
+          new Date(appointment.slot.date).toDateString() ===
+          new Date(appointmentSlot.value.date).toDateString()
+      )
+      .map((appointment: { slot: { hour: Hours } }) => appointment.slot.hour);
   }
 };
 
