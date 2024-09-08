@@ -42,8 +42,8 @@ export const useDoctorStore = defineStore("doctor", {
         const response = await doctorApi.getDoctorById(id);
         this.doctor = response.data;
         return this.doctor.name;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -56,8 +56,8 @@ export const useDoctorStore = defineStore("doctor", {
         this.doctor = response.data;
         this.setUserID(response.data._id);
         return this.doctor;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -70,8 +70,8 @@ export const useDoctorStore = defineStore("doctor", {
         this.doctor = response.data;
         this.setUserID(response.data._id);
         return this.doctor;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -84,9 +84,8 @@ export const useDoctorStore = defineStore("doctor", {
         console.log("API Response:", response);
         this.doctor = { ...this.doctor, ...response.data };
         console.log("Doctor details updated successfully");
-      } catch (error: any) {
-        console.error("API Error:", error);
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -98,9 +97,8 @@ export const useDoctorStore = defineStore("doctor", {
         await doctorApi.deleteDoctor(id);
         this.doctor = {} as Doctor;
         console.log("Doctor deleted successfully");
-      } catch (error: any) {
-        console.error("API Error:", error);
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -112,8 +110,8 @@ export const useDoctorStore = defineStore("doctor", {
         const response = await appointmentApi.getAppointmentsByDoctorId(id);
         this.appointments = response.data;
         return this.appointments;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
