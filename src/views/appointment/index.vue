@@ -24,6 +24,14 @@
     >
       <div class="w-full max-w-2xl relative">
         <div v-if="selectedDoctor">
+          <!-- Back button -->
+          <button
+            @click="goBackToDoctorList"
+            class="text-teal-600 underline hover:text-teal-400 mb-4"
+          >
+            <span class="material-symbols-outlined"> arrow_back </span>
+          </button>
+
           <!-- Appointment form -->
           <h1 class="text-3xl font-bold text-teal-600">New Appointment</h1>
           <form @submit.prevent="submitAppointment">
@@ -179,7 +187,7 @@ const selectDoctor = async (doctor: Doctor) => {
 };
 
 const submitAppointment = async () => {
-  if (!selectedDoctor || !patientStore.getPatient) return;
+  if (!selectedDoctor.value || !patientStore.getPatient) return;
 
   const appointment: Appointment = {
     patientId: patientStore.getUserID,
@@ -190,6 +198,10 @@ const submitAppointment = async () => {
   };
 
   await appointmentStore.createAppointment(appointment);
+
+  if (appointmentStore.getError) {
+    return;
+  }
 
   router.push("/home");
 
@@ -237,6 +249,10 @@ const validateWeekdayandFetchAppointments = async () => {
 
 const isSlotUnavailable = (hour: Hours) => {
   return unavailableSlots.value.includes(hour);
+};
+
+const goBackToDoctorList = () => {
+  selectedDoctor.value = null;
 };
 
 onMounted(async () => {
