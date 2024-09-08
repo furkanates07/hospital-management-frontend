@@ -23,8 +23,8 @@ export const useDoctorsStore = defineStore("doctors", {
         const response = await doctorApi.getAllDoctors();
         this.doctors = response.data;
         return this.doctors;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -36,8 +36,8 @@ export const useDoctorsStore = defineStore("doctors", {
         const response = await doctorApi.getDoctorsBySpeciality(speciality);
         this.doctors = response.data;
         return this.doctors;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
