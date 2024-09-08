@@ -15,6 +15,10 @@ export default {
     return apiClient.get(`/doctors/${id}`);
   },
 
+  getDoctorByEmail(email: string) {
+    return apiClient.get(`/doctors/email/${email}`);
+  },
+
   getDoctorsBySpeciality(speciality: Speciality) {
     return apiClient.get("/doctors/speciality/" + speciality);
   },
