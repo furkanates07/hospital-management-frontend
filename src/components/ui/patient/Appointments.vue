@@ -69,7 +69,7 @@
           </p>
           <p class="text-gray-700 mb-2">
             <strong>Status: </strong>
-            <span class="text-teal-600 font-bold">
+            <span :class="getStatusClass(appointment.status)">
               {{ appointment.status.toUpperCase() }}
             </span>
           </p>
@@ -151,6 +151,22 @@ const fetchDoctorData = async () => {
     doctorSpecialities.value[doctorId] = doctorStore.getDoctorSpeciality;
   }
 };
+
+const cancelAppointment = async (appointment: Appointment) => {
+  selectedAppointment.value = appointment;
+
+  await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
+    patientStore.userID,
+    appointment.doctorId
+  );
+
+  selectedAppointmentId.value = appointmentStore.getAppointmentID;
+
+  await appointmentStore.cancelAppointment(selectedAppointmentId.value);
+  await patientStore.fetchAppointments(patientStore.userID);
+  fetchDoctorData();
+};
+
 const getStatusColor = (status: string) => {
   switch (status) {
     case Status.PENDING:
