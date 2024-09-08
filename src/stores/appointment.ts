@@ -17,11 +17,28 @@ export const useAppointmentStore = defineStore("appointment", {
     getAppointmentID(): string {
       return this.appointmentID;
     },
+    getError(): string {
+      return this.error;
+    },
   },
 
   actions: {
     async setAppointmentID(id: string) {
       this.appointmentID = id;
+    },
+
+    async createAppointment(appointmentData: Appointment) {
+      this.loading = true;
+      try {
+        const response = await appointmentApi.createAppointment(
+          appointmentData
+        );
+        this.appointment = response.data;
+      } catch (error: any) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async fetchAppointment(id: string) {
