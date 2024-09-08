@@ -38,8 +38,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.getPatientById(id);
         this.patient = response.data;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -50,9 +50,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.updatePatientDetails(id, data);
         this.patient = { ...this.patient, ...response.data };
-      } catch (error: any) {
-        this.error = error.message;
-        console.error("API Error:", error);
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -63,8 +62,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.updatePatientConditions(id, data);
         this.patient = { ...this.patient, ...response.data };
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -75,8 +74,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         await patientApi.deletePatient(id);
         this.patient = {} as Patient;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -87,8 +86,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await appointmentApi.getAppointmentsByPatientId(id);
         this.appointments = response.data;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
