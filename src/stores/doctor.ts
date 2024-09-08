@@ -54,6 +54,21 @@ export const useDoctorStore = defineStore("doctor", {
       try {
         const response = await doctorApi.getDoctorById(id);
         this.doctor = response.data;
+        this.setUserID(response.data._id);
+        return this.doctor;
+      } catch (error: any) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchDoctorByEmail(email: string) {
+      this.loading = true;
+      try {
+        const response = await doctorApi.getDoctorByEmail(email);
+        this.doctor = response.data;
+        this.setUserID(response.data._id);
         return this.doctor;
       } catch (error: any) {
         this.error = error.message;
