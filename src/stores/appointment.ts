@@ -35,8 +35,9 @@ export const useAppointmentStore = defineStore("appointment", {
         );
         this.appointment = response.data;
         this.appointmentID = response.data._id;
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
+        console.error("API Error:", this.getError);
       } finally {
         this.loading = false;
       }
@@ -49,8 +50,27 @@ export const useAppointmentStore = defineStore("appointment", {
         this.appointment = response.data;
         this.appointmentID = response.data._id;
         console.log(this.appointment);
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async getAppointmentIdByPatientIdAndDoctorId(
+      patientId: string,
+      doctorId: string
+    ) {
+      this.loading = true;
+      try {
+        const response =
+          await appointmentApi.getAppointmentIdByPatientIdAndDoctorId(
+            patientId,
+            doctorId
+          );
+        this.appointmentID = response.data;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -62,8 +82,8 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.approveAppointment(id);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Appointment approved successfully");
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -75,8 +95,8 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.rejectAppointment(id);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Appointment rejected successfully");
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -88,8 +108,8 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.cancelAppointment(id);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Appointment cancelled successfully");
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -101,8 +121,8 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.completeAppointment(id);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Appointment completed successfully");
-      } catch (error: any) {
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
@@ -115,9 +135,8 @@ export const useAppointmentStore = defineStore("appointment", {
         console.log("API Response:", response);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Prescription updated successfully");
-      } catch (error: any) {
-        console.error("API Error:", error);
-        this.error = error.message;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
