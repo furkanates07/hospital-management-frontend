@@ -39,12 +39,27 @@
           v-if="filteredAppointments.length"
           v-for="appointment in filteredAppointments"
           :key="appointment.slot.date + appointment.slot.hour"
-          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
+          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4"
+          :style="{
+            borderColor: getStatusColor(appointment.status),
+          }"
         >
-          <h2 class="text-teal-500 font-semibold mb-2">
-            Appointment with Doctor:
-            {{ doctorNames[appointment.doctorId] || "Loading..." }}
-          </h2>
+          <div class="flex flex-row justify-between">
+            <h2 class="text-teal-500 font-semibold mb-2">
+              Appointment with Doctor:
+              {{ doctorNames[appointment.doctorId] || "Loading..." }}
+            </h2>
+            <button
+              v-if="
+                appointment.status === Status.PENDING ||
+                appointment.status === Status.APPROVED
+              "
+              @click="cancelAppointment(appointment)"
+              class="text-red-500 cursor-pointer"
+            >
+              <span class="material-symbols-outlined"> close </span>
+            </button>
+          </div>
           <p class="text-gray-700 mb-2">
             <strong>Doctor's Department:</strong>
             {{ doctorSpecialities[appointment.doctorId] || "Loading..." }}
@@ -61,7 +76,10 @@
           <p class="text-gray-700 mb-2">
             <strong>Reason:</strong> {{ appointment.reason }}
           </p>
-          <p v-if="appointment.prescription" class="text-gray-700 mb-2">
+          <p
+            v-if="appointment.prescription || Status.COMPLETED"
+            class="text-gray-700 mb-2"
+          >
             <strong>Prescription:</strong> {{ appointment.prescription }}
           </p>
         </div>
@@ -73,16 +91,21 @@
 
 <script setup lang="ts">
 import { Status } from "@/enums/status.enum";
+import { Appointment } from "@/interfaces/appointment";
+import { useAppointmentStore } from "@/stores/appointment";
 import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
 import { computed, onMounted, ref } from "vue";
 
 const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
+const appointmentStore = useAppointmentStore();
 
 const doctorNames = ref<Record<string, string>>({});
 const doctorSpecialities = ref<Record<string, string>>({});
 const selectedStatus = ref<string>("");
+const selectedAppointment = ref<Appointment | null>(null);
+const selectedAppointmentId = ref<string>("");
 
 const status = Object.values(Status);
 
@@ -126,6 +149,39 @@ const fetchDoctorData = async () => {
     await doctorStore.fetchDoctor(doctorId);
     doctorNames.value[doctorId] = doctorStore.getDoctorFullName;
     doctorSpecialities.value[doctorId] = doctorStore.getDoctorSpeciality;
+  }
+};
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case Status.PENDING:
+      return "yellow-500";
+    case Status.APPROVED:
+      return "blue-500";
+    case Status.REJECTED:
+      return "red-500";
+    case Status.CANCELED:
+      return "gray-500";
+    case Status.COMPLETED:
+      return "green-500";
+    default:
+      return "gray-500";
+  }
+};
+
+const getStatusClass = (status: string) => {
+  switch (status) {
+    case Status.PENDING:
+      return "text-yellow-500";
+    case Status.APPROVED:
+      return "text-blue-500";
+    case Status.REJECTED:
+      return "text-red-500";
+    case Status.CANCELED:
+      return "text-gray-500";
+    case Status.COMPLETED:
+      return "text-green-500";
+    default:
+      return "text-gray-500";
   }
 };
 </script>
