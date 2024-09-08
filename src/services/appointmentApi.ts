@@ -22,6 +22,12 @@ export default {
     return apiClient.get(`/appointments/patient/${patientId}`);
   },
 
+  getAppointmentIdByPatientIdAndDoctorId(patientId: string, doctorId: string) {
+    return apiClient.get(
+      `/appointments/appointmentId/${patientId}/${doctorId}`
+    );
+  },
+
   approveAppointment(id: string) {
     return apiClient.post(`/appointments/${id}/approve`);
   },
