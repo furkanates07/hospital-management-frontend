@@ -34,6 +34,10 @@ export default {
     return apiClient.post(`/appointments/${id}/cancel`);
   },
 
+  completeAppointment(id: string) {
+    return apiClient.post(`/appointments/${id}/complete`);
+  },
+
   updatePrescription(id: string, data: UpdatePrescription) {
     console.log("API Call: Updating prescription", id, data);
     return apiClient.patch(`/appointments/${id}/prescription`, data);

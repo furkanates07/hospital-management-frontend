@@ -34,6 +34,7 @@ export const useAppointmentStore = defineStore("appointment", {
           appointmentData
         );
         this.appointment = response.data;
+        this.appointmentID = response.data._id;
       } catch (error: any) {
         this.error = error.message;
       } finally {
@@ -46,6 +47,7 @@ export const useAppointmentStore = defineStore("appointment", {
       try {
         const response = await appointmentApi.getAppointmentById(id);
         this.appointment = response.data;
+        this.appointmentID = response.data._id;
         console.log(this.appointment);
       } catch (error: any) {
         this.error = error.message;
@@ -86,6 +88,19 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.cancelAppointment(id);
         this.appointment = { ...this.appointment, ...response.data };
         console.log("Appointment cancelled successfully");
+      } catch (error: any) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async completeAppointment(id: string) {
+      this.loading = true;
+      try {
+        const response = await appointmentApi.completeAppointment(id);
+        this.appointment = { ...this.appointment, ...response.data };
+        console.log("Appointment completed successfully");
       } catch (error: any) {
         this.error = error.message;
       } finally {
