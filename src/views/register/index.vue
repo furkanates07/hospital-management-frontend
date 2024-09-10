@@ -83,8 +83,7 @@
           <input
             v-model="registerData.dateOfBirth"
             id="dateOfBirth"
-            type="text"
-            placeholder="dd/mm/yyyy"
+            type="date"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
             required
           />
@@ -106,6 +105,7 @@
                 v-model="registerData.gender"
                 value="Male"
                 class="form-radio text-teal-600"
+                required
               />
               <span class="ml-2 text-teal-600">Male</span>
             </label>
@@ -117,10 +117,14 @@
                 v-model="registerData.gender"
                 value="Female"
                 class="form-radio text-teal-600"
+                required
               />
               <span class="ml-2 text-teal-600">Female</span>
             </label>
           </div>
+          <p v-if="formErrors.gender" class="text-red-500 text-sm mt-2">
+            {{ formErrors.gender }}
+          </p>
         </div>
       </div>
 
@@ -164,9 +168,33 @@ const registerData = ref<Patient>({
   gender: "",
 });
 
+const formErrors = ref<{ gender?: string }>({});
+
+const isAtLeast16YearsOld = (dateOfBirth: string): boolean => {
+  const today = new Date();
+  const dob = new Date(dateOfBirth);
+  const age = today.getFullYear() - dob.getFullYear();
+  const monthDifference = today.getMonth() - dob.getMonth();
+
+  return age > 16 || (age === 16 && monthDifference >= 0);
+};
+
 const handleRegister = async () => {
+  formErrors.value = {};
+
+  if (!registerData.value.gender) {
+    formErrors.value.gender = "Gender is required.";
+    return;
+  }
+
+  if (!isAtLeast16YearsOld(registerData.value.dateOfBirth)) {
+    alert("You must be at least 16 years old to register.");
+    return;
+  }
+
   try {
     await authStore.registerPatient(registerData.value);
+    alert("Patient registered successfully!");
     router.push("/login");
   } catch (err: any) {
     authStore.error = err.message;
