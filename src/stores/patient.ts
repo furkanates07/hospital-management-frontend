@@ -115,6 +115,7 @@ export const usePatientStore = defineStore("patient", {
     async logout() {
       this.patient = {} as Patient;
       this.appointments = [];
+      this.userID = "";
       this.error = "";
       this.loading = false;
     },
