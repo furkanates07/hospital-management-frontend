@@ -1,4 +1,9 @@
-import { Patient, PatientConditions, PatientDetails } from "@/interfaces/index";
+import {
+  ChangePassword,
+  Patient,
+  PatientConditions,
+  PatientDetails,
+} from "@/interfaces/index";
 import apiClient from "./apiClient";
 
 export default {
@@ -12,6 +17,10 @@ export default {
 
   getPatientById(id: string) {
     return apiClient.get(`/patients/${id}`);
+  },
+
+  changePassword(id: string, data: ChangePassword) {
+    return apiClient.patch(`/patients/${id}/change-password`, data);
   },
 
   updatePatientDetails(id: string, data: PatientDetails) {
