@@ -1,4 +1,9 @@
-import { Patient, PatientConditions, PatientDetails } from "@/interfaces";
+import {
+  ChangePassword,
+  Patient,
+  PatientConditions,
+  PatientDetails,
+} from "@/interfaces";
 import { Appointment } from "@/interfaces/appointment";
 import appointmentApi from "@/services/appointmentApi";
 import patientApi from "@/services/patientApi";
@@ -26,6 +31,9 @@ export const usePatientStore = defineStore("patient", {
     getAppointments(): Appointment[] {
       return this.appointments;
     },
+    getError(): string {
+      return this.error;
+    },
   },
 
   actions: {
@@ -38,6 +46,17 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.getPatientById(id);
         this.patient = response.data;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async changePassword(id: string, data: ChangePassword) {
+      this.loading = true;
+      try {
+        await patientApi.changePassword(id, data);
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
