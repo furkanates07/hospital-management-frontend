@@ -3,27 +3,26 @@
     <div class="w-full max-w-2xl relative">
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-teal-500">Patient Profile</h1>
-      </div>
-
-      <div class="flex justify-end gap-3 py-3">
-        <div v-if="isEditing">
+        <div class="flex gap-3 py-3">
+          <div v-if="isEditing">
+            <button
+              @click="saveChanges"
+              class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
+            >
+              Save Changes
+            </button>
+          </div>
           <button
-            @click="saveChanges"
-            class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
+            @click="toggleEditMode"
+            :class="{
+              'bg-teal-500 hover:bg-teal-600': !isEditing,
+              'bg-rose-700 hover:bg-rose-800': isEditing,
+            }"
+            class="text-white py-2 px-4 rounded-lg"
           >
-            Save Changes
+            {{ isEditing ? "Cancel" : "Edit" }}
           </button>
         </div>
-        <button
-          @click="toggleEditMode"
-          :class="{
-            'bg-teal-500 hover:bg-teal-600': !isEditing,
-            'bg-rose-700 hover:bg-rose-800': isEditing,
-          }"
-          class="text-white py-2 px-4 rounded-lg"
-        >
-          {{ isEditing ? "Cancel" : "Edit" }}
-        </button>
       </div>
 
       <!-- Tabs Navigation -->
@@ -325,7 +324,10 @@ const changePasswordHandler = async (): Promise<void> => {
   if (changePassword.value.oldPassword && changePassword.value.newPassword) {
     await patientStore.changePassword(userID, changePassword.value);
     changePassword.value = { oldPassword: "", newPassword: "" };
-    isChangingPassword.value = false;
+    if (!patientStore.getError) {
+      isChangingPassword.value = false;
+      alert("Password changed successfully!");
+    }
   }
 };
 
