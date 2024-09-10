@@ -92,5 +92,12 @@ export const usePatientStore = defineStore("patient", {
         this.loading = false;
       }
     },
+
+    async logout() {
+      this.patient = {} as Patient;
+      this.appointments = [];
+      this.error = "";
+      this.loading = false;
+    },
   },
 });
