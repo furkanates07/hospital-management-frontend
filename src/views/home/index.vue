@@ -35,17 +35,21 @@ import PatientHome from "@/components/ui/patient/Home.vue";
 import PatientMedicalRecords from "@/components/ui/patient/MedicalRecords.vue";
 import PatientProfile from "@/components/ui/patient/Profile.vue";
 import { Role } from "@/enums";
+import { useAppointmentStore } from "@/stores/appointment";
 import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctor";
+import { useDoctorsStore } from "@/stores/doctors";
 import { usePatientStore } from "@/stores/patient";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
-const authStore = useAuthStore();
 const selectedTab = ref("");
 const router = useRouter();
+const authStore = useAuthStore();
 const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
+const doctorsStore = useDoctorsStore();
+const appointmentsStore = useAppointmentStore();
 
 const tabs = ref(
   authStore.role === "doctor"
@@ -98,6 +102,8 @@ const handleTabChange = (key: string) => {
     } else {
       patientStore.logout();
     }
+    appointmentsStore.logout();
+    doctorsStore.logout();
     authStore.logout();
     router.push("/login");
   } else {
