@@ -77,7 +77,10 @@
             <strong>Reason:</strong> {{ appointment.reason }}
           </p>
           <p
-            v-if="appointment.prescription || Status.COMPLETED"
+            v-if="
+              appointment.prescription &&
+              appointment.status === Status.COMPLETED
+            "
             class="text-gray-700 mb-2"
           >
             <strong>Prescription:</strong> {{ appointment.prescription }}
