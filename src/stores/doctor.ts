@@ -29,6 +29,9 @@ export const useDoctorStore = defineStore("doctor", {
     getAppointments(): Appointment[] {
       return this.appointments;
     },
+    getError(): string {
+      return this.error;
+    },
   },
 
   actions: {
@@ -119,6 +122,7 @@ export const useDoctorStore = defineStore("doctor", {
 
     async logout() {
       this.doctor = {} as Doctor;
+      this.userID = "";
       this.appointments = [];
       this.error = "";
       this.loading = false;
