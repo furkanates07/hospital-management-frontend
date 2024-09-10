@@ -42,5 +42,11 @@ export const useDoctorsStore = defineStore("doctors", {
         this.loading = false;
       }
     },
+
+    async logout() {
+      this.doctors = [];
+      this.loading = false;
+      this.error = "";
+    },
   },
 });
