@@ -1,4 +1,4 @@
-import { Doctor, DoctorUpdate } from "@/interfaces";
+import { ChangePassword, Doctor, DoctorUpdate } from "@/interfaces";
 import { Appointment } from "@/interfaces/appointment";
 import appointmentApi from "@/services/appointmentApi";
 import doctorApi from "@/services/doctorApi";
@@ -73,6 +73,17 @@ export const useDoctorStore = defineStore("doctor", {
         this.doctor = response.data;
         this.setUserID(response.data._id);
         return this.doctor;
+      } catch (err: any) {
+        this.error = err.response?.data?.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async changePassword(id: string, data: ChangePassword) {
+      this.loading = true;
+      try {
+        await doctorApi.changePassword(id, data);
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
