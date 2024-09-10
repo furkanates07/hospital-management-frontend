@@ -114,7 +114,7 @@ const status = Object.values(Status);
 
 onMounted(async () => {
   await patientStore.fetchAppointments(patientStore.userID);
-  fetchDoctorData();
+  await fetchDoctorData();
 });
 
 const appointments = computed(() => {
@@ -126,9 +126,15 @@ const appointments = computed(() => {
 });
 
 const filteredAppointments = computed(() => {
+  const today = new Date().setHours(0, 0, 0, 0);
+
   if (!selectedStatus.value) {
-    return appointments.value;
+    return appointments.value.filter((appointment) => {
+      const appointmentDate = new Date(appointment.slot.date).getTime();
+      return appointmentDate >= today;
+    });
   }
+
   return appointments.value.filter((appointment) => {
     return appointment.status === selectedStatus.value;
   });
@@ -158,15 +164,20 @@ const fetchDoctorData = async () => {
 const cancelAppointment = async (appointment: Appointment) => {
   selectedAppointment.value = appointment;
 
-  await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
-    patientStore.userID,
-    appointment.doctorId
-  );
+  if (
+    selectedAppointment.value.status === Status.PENDING ||
+    selectedAppointment.value.status === Status.APPROVED
+  ) {
+    await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
+      appointment.patientId,
+      appointment.doctorId
+    );
 
-  selectedAppointmentId.value = appointmentStore.getAppointmentID;
+    selectedAppointmentId.value = appointmentStore.getAppointmentID;
 
-  await appointmentStore.cancelAppointment(selectedAppointmentId.value);
-  await patientStore.fetchAppointments(patientStore.userID);
+    await appointmentStore.cancelAppointment(selectedAppointmentId.value);
+    await patientStore.fetchAppointments(patientStore.userID);
+  }
   fetchDoctorData();
 };
 
