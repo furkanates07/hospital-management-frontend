@@ -24,7 +24,7 @@
             id="email"
             type="email"
             placeholder="Email"
-            class="mt-1 block w-full p-3 border-b border-gray-300 rounded-lg focus:outline-none focus:ring-0 focus:border-teal-500"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 focus:border-teal-500"
             required
           />
         </div>
@@ -34,7 +34,7 @@
             id="password"
             type="password"
             placeholder="Password"
-            class="mt-1 block w-full p-3 border-b border-gray-300 rounded-lg focus:outline-none focus:ring-0 focus:border-teal-500"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 focus:border-teal-500"
             required
           />
         </div>
