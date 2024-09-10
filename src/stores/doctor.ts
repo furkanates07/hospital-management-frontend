@@ -116,5 +116,12 @@ export const useDoctorStore = defineStore("doctor", {
         this.loading = false;
       }
     },
+
+    async logout() {
+      this.doctor = {} as Doctor;
+      this.appointments = [];
+      this.error = "";
+      this.loading = false;
+    },
   },
 });
