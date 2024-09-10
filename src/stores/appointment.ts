@@ -49,7 +49,6 @@ export const useAppointmentStore = defineStore("appointment", {
         const response = await appointmentApi.getAppointmentById(id);
         this.appointment = response.data;
         this.appointmentID = response.data._id;
-        console.log(this.appointment);
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
@@ -140,6 +139,13 @@ export const useAppointmentStore = defineStore("appointment", {
       } finally {
         this.loading = false;
       }
+    },
+
+    async logout() {
+      this.appointment = {} as Appointment;
+      this.appointmentID = "";
+      this.loading = false;
+      this.error = "";
     },
   },
 });
