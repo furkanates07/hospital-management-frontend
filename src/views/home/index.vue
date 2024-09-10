@@ -93,6 +93,11 @@ const fullName = computed(() => {
 
 const handleTabChange = (key: string) => {
   if (key === "logout") {
+    if (authStore.role === Role.DOCTOR) {
+      doctorStore.logout();
+    } else {
+      patientStore.logout();
+    }
     authStore.logout();
     router.push("/login");
   } else {
