@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
-    <div class="bg-white p-16 rounded-lg shadow-lg max-w-md text-center">
+    <div
+      class="bg-white p-16 rounded-lg shadow-lg w-full max-w-2xl relative text-center"
+    >
       <h1 class="text-3xl font-bold text-teal-500 mb-4">
         Welcome, {{ patientName }}!
       </h1>
