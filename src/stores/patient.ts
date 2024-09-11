@@ -46,6 +46,8 @@ export const usePatientStore = defineStore("patient", {
       try {
         const response = await patientApi.getPatientById(id);
         this.patient = response.data;
+        this.setUserID(response.data._id);
+        return this.patient;
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
