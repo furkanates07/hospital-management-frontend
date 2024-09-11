@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-screen overflow-y-scroll">
     <router-view />
   </div>
 </template>
