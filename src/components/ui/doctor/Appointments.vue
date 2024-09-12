@@ -137,15 +137,35 @@ const appointments = computed(() => {
 const filteredAppointments = computed(() => {
   const today = new Date().setHours(0, 0, 0, 0);
 
-  if (!selectedStatus.value) {
-    return appointments.value.filter((appointment) => {
-      const appointmentDate = new Date(appointment.slot.date).getTime();
-      return appointmentDate >= today;
-    });
+  let filtered = appointments.value.filter((appointment) => {
+    const appointmentDate = new Date(appointment.slot.date).getTime();
+    return appointmentDate >= today;
+  });
+
+  if (selectedStatus.value && selectedStatus.value !== "All") {
+    filtered = filtered.filter(
+      (appointment) => appointment.status === selectedStatus.value
+    );
   }
 
-  return appointments.value.filter((appointment) => {
-    return appointment.status === selectedStatus.value;
+  return filtered.sort((a, b) => {
+    const priorityOrder = [
+      Status.PENDING,
+      Status.APPROVED,
+      Status.REJECTED,
+      Status.CANCELED,
+      Status.COMPLETED,
+    ];
+    const priorityA = priorityOrder.indexOf(a.status);
+    const priorityB = priorityOrder.indexOf(b.status);
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    const dateA = new Date(a.slot.date).getTime();
+    const dateB = new Date(b.slot.date).getTime();
+    return dateA - dateB;
   });
 });
 
@@ -215,6 +235,8 @@ const completeAppointment = async (appointment: Appointment) => {
     selectedAppointmentId.value = appointmentStore.getAppointmentID;
 
     await appointmentStore.fetchAppointment(selectedAppointmentId.value);
+    await patientStore.fetchPatient(appointment.patientId);
+    await doctorStore.fetchDoctor(appointment.doctorId);
   }
   fetchPatientData();
 };
