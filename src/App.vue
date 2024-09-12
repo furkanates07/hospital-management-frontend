@@ -1,14 +1,17 @@
 <template>
-  <div class="h-screen overflow-y-scroll">
+  <div :class="getContainerClasses">
     <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-onMounted(() => {
-  console.log("App mounted");
+const route = useRoute();
+
+const getContainerClasses = computed(() => {
+  return route.path !== "/login" ? "h-screen overflow-y-scroll" : "";
 });
 </script>
 
