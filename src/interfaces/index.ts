@@ -1,3 +1,4 @@
+export { Appointment } from "./appointment";
 export { UpdatePrescription } from "./appointment/";
 export { Slot } from "./appointment/slot.interface";
 export { ChangePassword } from "./change-password.interface";
