@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/stores/auth";
 import { createRouter, createWebHistory } from "vue-router";
 import AppointmentView from "../views/appointment/index.vue";
 import ExaminationView from "../views/examination/index.vue";
@@ -17,6 +18,17 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (
+    to.path === "/home" &&
+    (from.path === "/examination" || from.path === "/create-appointment")
+  ) {
+    authStore.setSelectedTab("appointments");
+  }
+  next();
 });
 
 export default router;
