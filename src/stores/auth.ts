@@ -1,5 +1,5 @@
 import { Role } from "@/enums/role.enum";
-import { Login, Patient } from "@/interfaces/index";
+import { Doctor, Login, Patient } from "@/interfaces/index";
 import { setAuthToken } from "@/services/apiClient";
 import authApi from "@/services/authApi";
 import { defineStore } from "pinia";
@@ -7,10 +7,11 @@ import { defineStore } from "pinia";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     token: localStorage.getItem("access_token") as string | null,
-    user: null as any | null,
+    user: null as Patient | Doctor | null,
     userId: null as string | null,
     role: null as Role | null,
     error: null as string | null,
+    selectedTab: "",
   }),
 
   getters: {
@@ -21,6 +22,10 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
+    setSelectedTab(tab: string) {
+      this.selectedTab = tab;
+    },
+
     async login(loginData: Login, loginRole: Role.DOCTOR | Role.PATIENT) {
       try {
         const response =
