@@ -9,7 +9,7 @@
         :key="tab.key"
         @click="handleTabChange(tab.key)"
         :class="[
-          'p-4 cursor-pointer hover:bg-teal-600',
+          'p-4 cursor-pointer hover:bg-teal-600 transition duration-300 ease-in-out',
           tab.key === selectedTab ? 'bg-teal-700' : '',
         ]"
       >
@@ -50,7 +50,7 @@ const doctorStore = useDoctorStore();
 const doctorsStore = useDoctorsStore();
 const appointmentsStore = useAppointmentStore();
 
-const selectedTab = ref(authStore.selectedTab || "");
+const selectedTab = ref(authStore.selectedTab || "home");
 
 const tabs = ref(
   authStore.role === "doctor"
@@ -70,9 +70,11 @@ const tabs = ref(
 );
 
 const activeComponent = computed(() => {
+  if (!selectedTab.value || selectedTab.value === "home") {
+    return authStore.role === Role.DOCTOR ? DoctorHome : PatientHome;
+  }
+
   switch (selectedTab.value) {
-    case "home":
-      return authStore.role === Role.DOCTOR ? DoctorHome : PatientHome;
     case "appointments":
       return authStore.role === Role.DOCTOR
         ? DoctorAppointments
