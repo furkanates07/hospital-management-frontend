@@ -10,6 +10,7 @@
         Register Patient
       </h2>
 
+      <!-- Full Name -->
       <div class="mb-6">
         <label for="name" class="block text-teal-500 text-sm font-bold mb-2">
           Full Name
@@ -22,8 +23,12 @@
           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
           required
         />
+        <p v-if="formErrors.name" class="text-red-500 text-sm mt-2">
+          {{ formErrors.name }}
+        </p>
       </div>
 
+      <!-- Email -->
       <div class="mb-6">
         <label for="email" class="block text-teal-500 text-sm font-bold mb-2">
           Email
@@ -36,25 +41,41 @@
           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
           required
         />
+        <p v-if="formErrors.email" class="text-red-500 text-sm mt-2">
+          {{ formErrors.email }}
+        </p>
       </div>
 
-      <div class="mb-6">
+      <!-- Password -->
+      <div class="mb-6 relative">
         <label
           for="password"
           class="block text-teal-500 text-sm font-bold mb-2"
         >
           Password
         </label>
-        <input
-          v-model="registerData.password"
-          id="password"
-          type="password"
-          placeholder="********"
-          class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
-          required
-        />
+        <div class="relative">
+          <input
+            :type="passwordVisible ? 'text' : 'password'"
+            v-model="registerData.password"
+            id="password"
+            placeholder="********"
+            class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
+            required
+          />
+          <span
+            class="material-symbols-outlined absolute inset-y-0 right-3 flex items-center text-teal-500 cursor-pointer"
+            @click="togglePasswordVisibility"
+          >
+            {{ passwordVisible ? "visibility" : "visibility_off" }}
+          </span>
+        </div>
+        <p v-if="formErrors.password" class="text-red-500 text-sm mt-2">
+          {{ formErrors.password }}
+        </p>
       </div>
 
+      <!-- Phone Number -->
       <div class="mb-6">
         <label
           for="phoneNumber"
@@ -70,9 +91,13 @@
           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
           required
         />
+        <p v-if="formErrors.phoneNumber" class="text-red-500 text-sm mt-2">
+          {{ formErrors.phoneNumber }}
+        </p>
       </div>
 
       <div class="mb-6 flex flex-col sm:flex-row sm:justify-between">
+        <!-- Date of Birth -->
         <div class="mb-4 sm:mb-0 sm:w-1/2 pr-2">
           <label
             for="dateOfBirth"
@@ -87,8 +112,12 @@
             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-500"
             required
           />
+          <p v-if="formErrors.dateOfBirth" class="text-red-500 text-sm mt-2">
+            {{ formErrors.dateOfBirth }}
+          </p>
         </div>
 
+        <!-- Gender -->
         <div class="mb-4 sm:w-1/2 pl-2">
           <label
             for="gender"
@@ -130,16 +159,18 @@
 
       <button
         type="submit"
-        class="w-full py-3 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+        class="w-full py-3 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 active:bg-teal-700"
       >
         Register
       </button>
+
       <p
         v-if="authStore.getError"
         class="mt-4 text-red-500 text-center text-sm"
       >
         {{ authStore.getError }}
       </p>
+
       <router-link
         to="/login"
         class="block mt-4 text-teal-500 hover:underline text-center"
@@ -168,19 +199,44 @@ const registerData = ref<Patient>({
   gender: "",
 });
 
-const formErrors = ref<{ gender?: string }>({});
+const passwordVisible = ref(false);
+
+const formErrors = ref<{ [key: string]: string }>({});
 
 const isAtLeast16YearsOld = (dateOfBirth: string): boolean => {
   const today = new Date();
   const dob = new Date(dateOfBirth);
   const age = today.getFullYear() - dob.getFullYear();
   const monthDifference = today.getMonth() - dob.getMonth();
-
   return age > 16 || (age === 16 && monthDifference >= 0);
+};
+
+const togglePasswordVisibility = () => {
+  passwordVisible.value = !passwordVisible.value;
 };
 
 const handleRegister = async () => {
   formErrors.value = {};
+
+  if (!registerData.value.name) {
+    formErrors.value.name = "Full name is required.";
+    return;
+  }
+
+  if (!registerData.value.email) {
+    formErrors.value.email = "Email is required.";
+    return;
+  }
+
+  if (!registerData.value.password) {
+    formErrors.value.password = "Password is required.";
+    return;
+  }
+
+  if (!registerData.value.phoneNumber) {
+    formErrors.value.phoneNumber = "Phone number is required.";
+    return;
+  }
 
   if (!registerData.value.gender) {
     formErrors.value.gender = "Gender is required.";
@@ -188,7 +244,8 @@ const handleRegister = async () => {
   }
 
   if (!isAtLeast16YearsOld(registerData.value.dateOfBirth)) {
-    alert("You must be at least 16 years old to register.");
+    formErrors.value.dateOfBirth =
+      "You must be at least 16 years old to register.";
     return;
   }
 
@@ -197,7 +254,7 @@ const handleRegister = async () => {
     alert("Patient registered successfully!");
     router.push("/login");
   } catch (err: any) {
-    authStore.error = err.message;
+    authStore.setError(err.message);
   }
 };
 </script>

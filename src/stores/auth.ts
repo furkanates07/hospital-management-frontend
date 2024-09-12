@@ -22,8 +22,12 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    setSelectedTab(tab: string) {
+    async setSelectedTab(tab: string) {
       this.selectedTab = tab;
+    },
+
+    async setError(error: string) {
+      this.error = error;
     },
 
     async login(loginData: Login, loginRole: Role.DOCTOR | Role.PATIENT) {
