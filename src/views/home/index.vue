@@ -43,13 +43,14 @@ import { usePatientStore } from "@/stores/patient";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
-const selectedTab = ref("");
 const router = useRouter();
 const authStore = useAuthStore();
 const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
 const doctorsStore = useDoctorsStore();
 const appointmentsStore = useAppointmentStore();
+
+const selectedTab = ref(authStore.selectedTab || "");
 
 const tabs = ref(
   authStore.role === "doctor"
