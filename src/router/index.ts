@@ -22,13 +22,18 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  if (
-    to.path === "/home" &&
-    (from.path === "/examination" || from.path === "/create-appointment")
-  ) {
-    authStore.setSelectedTab("appointments");
+
+  if (!authStore.isAuth && to.path !== "/login" && to.path !== "/register") {
+    next("/login");
+  } else {
+    if (
+      to.path === "/home" &&
+      (from.path === "/examination" || from.path === "/create-appointment")
+    ) {
+      authStore.setSelectedTab("appointments");
+    }
+    next();
   }
-  next();
 });
 
 export default router;
