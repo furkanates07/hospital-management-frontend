@@ -1,238 +1,55 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col items-center py-4">
     <div class="w-full max-w-2xl relative">
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-teal-500">Patient Profile</h1>
-        <div class="flex gap-3 py-3">
-          <div v-if="isEditing">
-            <button
-              @click="saveChanges"
-              class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
-            >
-              Save Changes
-            </button>
-          </div>
-          <button
-            @click="toggleEditMode"
-            :class="{
-              'bg-teal-500 hover:bg-teal-600': !isEditing,
-              'bg-rose-700 hover:bg-rose-800': isEditing,
-            }"
-            class="text-white py-2 px-4 rounded-lg"
-          >
-            {{ isEditing ? "Cancel" : "Edit" }}
-          </button>
-        </div>
-      </div>
+      <ProfileHeader
+        :isEditing="isEditing"
+        @save="saveChanges"
+        @toggleEditMode="toggleEditMode"
+      />
 
-      <!-- Tabs Navigation -->
-      <div class="flex space-x-4 mb-4">
-        <button
-          @click="activeTab = 'profile'"
-          :class="{
-            'text-teal-500 border-b-2 border-teal-500': activeTab === 'profile',
-            'text-gray-600': activeTab !== 'profile',
-          }"
-          class="py-2 px-4 font-semibold"
-        >
-          Details
-        </button>
-        <button
-          @click="activeTab = 'contacts'"
-          :class="{
-            'text-teal-500 border-b-2 border-teal-500':
-              activeTab === 'contacts',
-            'text-gray-600': activeTab !== 'contacts',
-          }"
-          class="py-2 px-4 font-semibold"
-        >
-          Emergency Contacts
-        </button>
-      </div>
+      <TabsNavigation
+        :activeTab="activeTab"
+        @changeTab="(tab) => (activeTab = tab)"
+      />
 
-      <!-- Tab Content -->
-      <div v-if="activeTab === 'profile'">
-        <div class="grid grid-cols-1 gap-4">
-          <div
-            v-for="(value, key) in patientDetails"
-            :key="key"
-            class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center border-l-4 border-teal-500"
-          >
-            <div class="flex-1">
-              <h2 class="text-teal-500 font-semibold capitalize pl-2">
-                {{ key }}
-              </h2>
-              <p v-if="!isEditing || !isEditableField(key)" class="mt-2 p-2">
-                {{ value || "N/A" }}
-              </p>
-              <!-- Date of Birth Field -->
-              <input
-                v-else-if="key === 'Date of Birth'"
-                v-model="editableFields[key]"
-                type="date"
-                class="mt-2 p-2 border border-teal-500 rounded-lg w-full"
-                :max="currentDate"
-              />
-              <!-- Other Fields -->
-              <input
-                v-else
-                v-model="editableFields[key]"
-                type="text"
-                class="mt-2 p-2 border border-teal-500 rounded-lg w-full"
-                :placeholder="key"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Change Password Section -->
-        <div
-          class="mt-6 bg-white p-4 rounded-lg shadow-md border-l-4 border-teal-500"
-        >
-          <div v-if="!isChangingPassword" class="flex justify-center">
-            <button
-              @click="toggleChangePasswordForm"
-              class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
-            >
-              Change Password
-            </button>
-          </div>
-
-          <!-- Change Password Form -->
-          <div v-else="isChangingPassword" class="mt-4">
-            <h2 class="text-xl font-semibold text-teal-500 mb-4">
-              Change Password
-            </h2>
-            <form @submit.prevent="changePasswordHandler">
-              <div class="space-y-4">
-                <div>
-                  <input
-                    id="oldPassword"
-                    placeholder="Old Password"
-                    v-model="changePassword.oldPassword"
-                    type="password"
-                    class="mt-1 p-2 border border-teal-500 rounded-lg w-full"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    id="newPassword"
-                    placeholder="New Password"
-                    v-model="changePassword.newPassword"
-                    type="password"
-                    class="mt-1 p-2 border border-teal-500 rounded-lg w-full"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="flex flex-col">
-                <div class="flex justify-center mt-4">
-                  <p
-                    v-if="patientStore.getError"
-                    class="mt-2 text-red-500 text-sm"
-                  >
-                    {{ patientStore.getError }}
-                  </p>
-                </div>
-                <div class="flex flex-row justify-end mt-4">
-                  <button
-                    type="submit"
-                    class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
-                  >
-                    Change Password
-                  </button>
-                  <button
-                    @click="cancelPasswordChange"
-                    type="button"
-                    class="bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      <ProfileContent
+        :activeTab="activeTab"
+        :patientDetails="patientDetails"
+        :editableFields="editableFields"
+        :isEditing="isEditing"
+        :isEditableField="isEditableField"
+        :currentDate="currentDate"
+      />
+      <PasswordChange
+        :activeTab="activeTab"
+        :isChangingPassword="isChangingPassword"
+        :changePassword="changePassword"
+        :toggleChangePasswordForm="toggleChangePasswordForm"
+        :changePasswordHandler="changePasswordHandler"
+        :cancelPasswordChange="cancelPasswordChange"
+        :patientStore="patientStore"
+      />
 
       <div v-if="activeTab === 'contacts'">
-        <div v-if="patient.emergencyContact?.length">
-          <h2 class="text-xl font-semibold mt-4 text-teal-500">
-            Emergency Contacts
-          </h2>
-          <ul class="space-y-2 mt-2">
-            <li
-              v-for="(contact, index) in patient.emergencyContact"
-              :key="index"
-              class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center border-l-4 border-teal-500"
-            >
-              <div>
-                <p><strong>Name:</strong> {{ contact.name }}</p>
-                <p><strong>Phone Number:</strong> {{ contact.phoneNumber }}</p>
-              </div>
-              <div v-if="isEditing">
-                <button
-                  @click="deleteContact(index)"
-                  class="bg-red-500 text-white py-1 px-2 rounded-lg hover:bg-red-600 ml-2"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          </ul>
-        </div>
+        <EmergencyContactsList
+          :contacts="patient.emergencyContact"
+          :isEditing="isEditing"
+          @delete-contact="deleteContact"
+        />
+        <AddNewContactForm
+          :isVisible="isAddingNewContact"
+          :newContactName="newContactName"
+          :newContactPhoneNumber="newContactPhoneNumber"
+          @submit-new-contact="submitNewContact"
+          @cancel-new-contact="cancelNewContact"
+          @update-new-contact-name="newContactName = $event"
+          @update-new-contact-phone-number="newContactPhoneNumber = $event"
+        />
 
-        <!-- Add New Contact Form -->
-        <div
-          v-if="isAddingNewContact"
-          class="bg-white p-4 rounded-lg shadow-md mt-4 border-l-4 border-teal-500"
-        >
-          <h3 class="text-lg font-semibold text-teal-500 mb-2">
-            Add New Contact
-          </h3>
-          <form @submit.prevent="submitNewContact">
-            <div class="flex gap-2">
-              <input
-                v-model="newContactName"
-                type="text"
-                placeholder="Name"
-                class="p-2 border border-teal-500 rounded-lg w-1/2"
-                required
-              />
-              <input
-                v-model="newContactPhoneNumber"
-                type="text"
-                placeholder="Phone Number"
-                class="p-2 border border-teal-500 rounded-lg w-1/2"
-                required
-              />
-            </div>
-            <div class="flex justify-end flex-row">
-              <button
-                type="submit"
-                class="mt-2 bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
-              >
-                Add Contact
-              </button>
-              <button
-                @click="cancelNewContact"
-                type="button"
-                class="mt-2 bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-        <div v-if="!isAddingNewContact" class="flex justify-center">
-          <button
-            @click="startAddingNewContact"
-            class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 mt-4"
-          >
-            Add New Contact
-          </button>
-        </div>
+        <AddNewContactButton
+          :isVisible="isAddingNewContact"
+          @start-adding-new-contact="startAddingNewContact"
+        />
       </div>
     </div>
   </div>
@@ -242,6 +59,13 @@
 import { ChangePassword, EmergencyContact } from "@/interfaces";
 import { usePatientStore } from "@/stores/patient";
 import { computed, ref } from "vue";
+import AddNewContactButton from "./profile/AddNewContactButton.vue";
+import AddNewContactForm from "./profile/AddNewContactForm.vue";
+import EmergencyContactsList from "./profile/EmergencyContactsList.vue";
+import PasswordChange from "./profile/PasswordChange.vue";
+import ProfileContent from "./profile/ProfileContent.vue";
+import ProfileHeader from "./profile/ProfileHeader.vue";
+import TabsNavigation from "./profile/TabsNavigation.vue";
 
 interface PatientDetailsFields {
   Name: string;
@@ -295,13 +119,13 @@ const editableFields = ref<Partial<PatientDetailsFields>>({
   Address: patient.value.address,
 });
 
-const isEditableField = (key: keyof PatientDetailsFields): boolean => {
+const isEditableField = (key: string): boolean => {
   return ![
     "Medical History",
     "Allergies",
     "Chronic Conditions",
     "Gender",
-  ].includes(key);
+  ].includes(key as keyof PatientDetailsFields);
 };
 
 const toggleEditMode = (): void => {
