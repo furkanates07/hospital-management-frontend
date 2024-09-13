@@ -1,5 +1,6 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col items-center py-4">
+    <div v-if="loading" class="text-gray-600">Loading...</div>
     <div class="w-full max-w-2xl relative">
       <!-- Header -->
       <div class="flex flex-row justify-between">
@@ -47,13 +48,13 @@
               class="flex space-x-2"
             >
               <button
-                @click="approveAppointment(appointment)"
+                @click="handleAppointmentStatus(appointment, 'approve')"
                 class="text-green-500 cursor-pointer"
               >
                 <span class="material-symbols-outlined"> check </span>
               </button>
               <button
-                @click="rejectAppointment(appointment)"
+                @click="handleAppointmentStatus(appointment, 'reject')"
                 class="text-red-500 cursor-pointer"
               >
                 <span class="material-symbols-outlined"> close </span>
@@ -65,7 +66,7 @@
             >
               <router-link to="/examination">
                 <button
-                  @click="completeAppointment(appointment)"
+                  @click="handleAppointmentStatus(appointment, 'complete')"
                   class="text-blue-500 cursor-pointer"
                 >
                   <span class="material-symbols-outlined"> check_circle </span>
@@ -118,12 +119,17 @@ const patientNames = ref<Record<string, string>>({});
 const selectedAppointment = ref<Appointment | null>(null);
 const selectedStatus = ref<string>("");
 const selectedAppointmentId = ref<string>("");
+const loading = ref<boolean>(true);
 
 const status = Object.values(Status);
 
 onMounted(async () => {
-  await doctorStore.fetchAppointments(doctorStore.userID);
-  await fetchPatientData();
+  try {
+    await doctorStore.fetchAppointments(doctorStore.userID);
+    await fetchPatientData();
+  } finally {
+    loading.value = false;
+  }
 });
 
 const appointments = computed(() => {
@@ -182,62 +188,50 @@ const formatDate = (slot: { date: Date; hour: string }) => {
 };
 
 const fetchPatientData = async () => {
-  const appointmentPatients = appointments.value.map((a) => a.patientId);
-  for (const patientId of new Set(appointmentPatients)) {
-    await patientStore.fetchPatient(patientId);
-    patientNames.value[patientId] = patientStore.getPatientFullName;
+  try {
+    const appointmentPatients = appointments.value.map((a) => a.patientId);
+    for (const patientId of new Set(appointmentPatients)) {
+      await patientStore.fetchPatient(patientId);
+      patientNames.value[patientId] = patientStore.getPatientFullName;
+    }
+  } catch (error) {
+    console.error("Failed to fetch patient data:", error);
   }
 };
 
-const approveAppointment = async (appointment: Appointment) => {
+const handleAppointmentStatus = async (
+  appointment: Appointment,
+  action: "approve" | "reject" | "complete"
+) => {
   selectedAppointment.value = appointment;
 
-  if (selectedAppointment.value.status === Status.PENDING) {
+  if (
+    (action === "approve" || action === "reject") &&
+    appointment.status === Status.PENDING
+  ) {
     await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
       appointment.patientId,
       appointment.doctorId
     );
-
     selectedAppointmentId.value = appointmentStore.getAppointmentID;
 
-    await appointmentStore.approveAppointment(selectedAppointmentId.value);
-    await doctorStore.fetchAppointments(doctorStore.userID);
-  }
-  fetchPatientData();
-};
-
-const rejectAppointment = async (appointment: Appointment) => {
-  selectedAppointment.value = appointment;
-
-  if (selectedAppointment.value.status === Status.PENDING) {
+    if (action === "approve") {
+      await appointmentStore.approveAppointment(selectedAppointmentId.value);
+    } else if (action === "reject") {
+      await appointmentStore.rejectAppointment(selectedAppointmentId.value);
+    }
+  } else if (action === "complete" && appointment.status === Status.APPROVED) {
     await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
       appointment.patientId,
       appointment.doctorId
     );
-
     selectedAppointmentId.value = appointmentStore.getAppointmentID;
-
-    await appointmentStore.rejectAppointment(selectedAppointmentId.value);
-    await doctorStore.fetchAppointments(doctorStore.userID);
-  }
-  fetchPatientData();
-};
-
-const completeAppointment = async (appointment: Appointment) => {
-  selectedAppointment.value = appointment;
-
-  if (selectedAppointment.value.status === Status.APPROVED) {
-    await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
-      appointment.patientId,
-      appointment.doctorId
-    );
-
-    selectedAppointmentId.value = appointmentStore.getAppointmentID;
-
     await appointmentStore.fetchAppointment(selectedAppointmentId.value);
     await patientStore.fetchPatient(appointment.patientId);
     await doctorStore.fetchDoctor(appointment.doctorId);
   }
+
+  await doctorStore.fetchAppointments(doctorStore.userID);
   fetchPatientData();
 };
 
