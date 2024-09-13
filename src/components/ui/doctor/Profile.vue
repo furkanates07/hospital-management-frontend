@@ -22,18 +22,18 @@
           <div v-if="!isChangingPassword" class="flex justify-center">
             <button
               @click="toggleChangePasswordForm"
-              class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
+              class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors"
             >
               Change Password
             </button>
           </div>
 
           <!-- Change Password Form -->
-          <div v-else="isChangingPassword" class="mt-4">
+          <div v-if="isChangingPassword" class="mt-4">
             <h2 class="text-xl font-semibold text-teal-500 mb-4">
               Change Password
             </h2>
-            <form @submit.prevent="changePasswordHandler">
+            <form @submit.prevent="handleChangePassword">
               <div class="space-y-4">
                 <div>
                   <input
@@ -58,24 +58,21 @@
               </div>
               <div class="flex flex-col">
                 <div class="flex justify-center mt-4">
-                  <p
-                    v-if="doctorStore.getError"
-                    class="mt-2 text-red-500 text-sm"
-                  >
+                  <p v-if="doctorStore.getError" class="text-red-500 text-sm">
                     {{ doctorStore.getError }}
                   </p>
                 </div>
                 <div class="flex flex-row justify-end mt-4">
                   <button
                     type="submit"
-                    class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600"
+                    class="bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors"
                   >
                     Change Password
                   </button>
                   <button
                     @click="cancelPasswordChange"
                     type="button"
-                    class="bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2"
+                    class="bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 ml-2 transition-colors"
                   >
                     Cancel
                   </button>
@@ -95,7 +92,6 @@ import { useDoctorStore } from "@/stores/doctor";
 import { computed, ref } from "vue";
 
 const doctorStore = useDoctorStore();
-
 const userID = doctorStore.getUserID;
 
 const isChangingPassword = ref(false);
@@ -118,21 +114,31 @@ const toggleChangePasswordForm = () => {
   isChangingPassword.value = !isChangingPassword.value;
 };
 
-const changePasswordHandler = async (): Promise<void> => {
-  if (changePassword.value.oldPassword && changePassword.value.newPassword) {
+const handleChangePassword = async (): Promise<void> => {
+  if (!changePassword.value.oldPassword || !changePassword.value.newPassword) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  try {
     await doctorStore.changePassword(userID, changePassword.value);
     changePassword.value = { oldPassword: "", newPassword: "" };
-    if (!doctorStore.getError) {
-      isChangingPassword.value = false;
-      alert("Password changed successfully!");
-    }
+    isChangingPassword.value = false;
+    alert("Password changed successfully!");
+  } catch (error) {
+    alert("An error occurred while changing the password. Please try again.");
   }
 };
 
 const cancelPasswordChange = (): void => {
-  changePassword.value = { oldPassword: "", newPassword: "" };
+  changePassword.value = {
+    oldPassword: "",
+    newPassword: "",
+  };
   isChangingPassword.value = false;
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Scoped CSS here */
+</style>
