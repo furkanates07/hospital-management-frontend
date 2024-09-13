@@ -1,5 +1,7 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col items-center py-4">
+    <div v-if="loading" class="text-gray-600">Loading...</div>
+
     <div class="w-full max-w-2xl relative">
       <!-- Header -->
       <div class="flex flex-row justify-between">
@@ -109,12 +111,18 @@ const doctorSpecialities = ref<Record<string, string>>({});
 const selectedStatus = ref<string>("");
 const selectedAppointment = ref<Appointment | null>(null);
 const selectedAppointmentId = ref<string>("");
+const loading = ref<boolean>(true);
 
 const status = Object.values(Status);
 
 onMounted(async () => {
-  await patientStore.fetchAppointments(patientStore.userID);
-  await fetchDoctorData();
+  try {
+    loading.value = true;
+    await patientStore.fetchAppointments(patientStore.userID);
+    await fetchDoctorData();
+  } finally {
+    loading.value = false;
+  }
 });
 
 const appointments = computed(() => {
@@ -173,32 +181,38 @@ const formatDate = (slot: { date: Date; hour: string }) => {
 };
 
 const fetchDoctorData = async () => {
-  const appointmentDoctors = appointments.value.map((a) => a.doctorId);
-  for (const doctorId of new Set(appointmentDoctors)) {
-    await doctorStore.fetchDoctor(doctorId);
-    doctorNames.value[doctorId] = doctorStore.getDoctorFullName;
-    doctorSpecialities.value[doctorId] = doctorStore.getDoctorSpeciality;
-  }
+  const appointmentDoctors = Array.from(
+    new Set(appointments.value.map((a) => a.doctorId))
+  );
+  const doctorPromises = appointmentDoctors.map((doctorId) =>
+    doctorStore.fetchDoctor(doctorId)
+  );
+  await Promise.all(doctorPromises);
+
+  doctorNames.value = appointmentDoctors.reduce((acc, doctorId) => {
+    acc[doctorId] = doctorStore.getDoctorFullName;
+    return acc;
+  }, {} as Record<string, string>);
+
+  doctorSpecialities.value = appointmentDoctors.reduce((acc, doctorId) => {
+    acc[doctorId] = doctorStore.getDoctorSpeciality;
+    return acc;
+  }, {} as Record<string, string>);
 };
 
 const cancelAppointment = async (appointment: Appointment) => {
+  if (![Status.PENDING, Status.APPROVED].includes(appointment.status)) return;
+
   selectedAppointment.value = appointment;
+  await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
+    appointment.patientId,
+    appointment.doctorId
+  );
+  selectedAppointmentId.value = appointmentStore.getAppointmentID;
 
-  if (
-    selectedAppointment.value.status === Status.PENDING ||
-    selectedAppointment.value.status === Status.APPROVED
-  ) {
-    await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
-      appointment.patientId,
-      appointment.doctorId
-    );
-
-    selectedAppointmentId.value = appointmentStore.getAppointmentID;
-
-    await appointmentStore.cancelAppointment(selectedAppointmentId.value);
-    await patientStore.fetchAppointments(patientStore.userID);
-  }
-  fetchDoctorData();
+  await appointmentStore.cancelAppointment(selectedAppointmentId.value);
+  await patientStore.fetchAppointments(patientStore.userID);
+  await fetchDoctorData();
 };
 
 const getStatusColor = (status: string) => {
