@@ -119,6 +119,7 @@ onMounted(async () => {
   try {
     loading.value = true;
     await patientStore.fetchAppointments(patientStore.userID);
+    console.log(patientStore.getAppointments);
     await fetchDoctorData();
   } finally {
     loading.value = false;
@@ -184,18 +185,21 @@ const fetchDoctorData = async () => {
   const appointmentDoctors = Array.from(
     new Set(appointments.value.map((a) => a.doctorId))
   );
-  const doctorPromises = appointmentDoctors.map((doctorId) =>
-    doctorStore.fetchDoctor(doctorId)
-  );
-  await Promise.all(doctorPromises);
 
-  doctorNames.value = appointmentDoctors.reduce((acc, doctorId) => {
-    acc[doctorId] = doctorStore.getDoctorFullName;
+  const doctorPromises = appointmentDoctors.map(async (doctorId) => {
+    const doctor = await doctorStore.fetchDoctor(doctorId);
+    return { doctorId, doctor };
+  });
+
+  const doctorData = await Promise.all(doctorPromises);
+
+  doctorNames.value = doctorData.reduce((acc, { doctorId, doctor }) => {
+    acc[doctorId] = doctor?.name || "Unknown Doctor";
     return acc;
   }, {} as Record<string, string>);
 
-  doctorSpecialities.value = appointmentDoctors.reduce((acc, doctorId) => {
-    acc[doctorId] = doctorStore.getDoctorSpeciality;
+  doctorSpecialities.value = doctorData.reduce((acc, { doctorId, doctor }) => {
+    acc[doctorId] = doctor?.speciality || "Unknown Speciality";
     return acc;
   }, {} as Record<string, string>);
 };
