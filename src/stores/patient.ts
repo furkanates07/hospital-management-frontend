@@ -41,7 +41,7 @@ export const usePatientStore = defineStore("patient", {
       this.userID = id;
     },
 
-    async fetchPatient(id: string) {
+    async fetchPatient(id: string): Promise<Patient> {
       this.loading = true;
       try {
         const response = await patientApi.getPatientById(id);
@@ -53,6 +53,7 @@ export const usePatientStore = defineStore("patient", {
       } finally {
         this.loading = false;
       }
+      return {} as Patient;
     },
 
     async changePassword(id: string, data: ChangePassword) {
@@ -102,7 +103,7 @@ export const usePatientStore = defineStore("patient", {
       }
     },
 
-    async fetchAppointments(id: string) {
+    async fetchAppointments(id: string): Promise<Appointment[]> {
       this.loading = true;
       try {
         const response = await appointmentApi.getAppointmentsByPatientId(id);
@@ -112,6 +113,7 @@ export const usePatientStore = defineStore("patient", {
       } finally {
         this.loading = false;
       }
+      return [] as Appointment[];
     },
 
     async logout() {
