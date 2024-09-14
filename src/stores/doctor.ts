@@ -52,7 +52,7 @@ export const useDoctorStore = defineStore("doctor", {
       }
     },
 
-    async fetchDoctor(id: string) {
+    async fetchDoctor(id: string): Promise<Doctor> {
       this.loading = true;
       try {
         const response = await doctorApi.getDoctorById(id);
@@ -64,9 +64,10 @@ export const useDoctorStore = defineStore("doctor", {
       } finally {
         this.loading = false;
       }
+      return {} as Doctor;
     },
 
-    async fetchDoctorByEmail(email: string) {
+    async fetchDoctorByEmail(email: string): Promise<Doctor> {
       this.loading = true;
       try {
         const response = await doctorApi.getDoctorByEmail(email);
@@ -78,6 +79,7 @@ export const useDoctorStore = defineStore("doctor", {
       } finally {
         this.loading = false;
       }
+      return {} as Doctor;
     },
 
     async changePassword(id: string, data: ChangePassword) {
@@ -118,7 +120,7 @@ export const useDoctorStore = defineStore("doctor", {
       }
     },
 
-    async fetchAppointments(id: string) {
+    async fetchAppointments(id: string): Promise<Appointment[]> {
       this.loading = true;
       try {
         const response = await appointmentApi.getAppointmentsByDoctorId(id);
@@ -129,6 +131,7 @@ export const useDoctorStore = defineStore("doctor", {
       } finally {
         this.loading = false;
       }
+      return [] as Appointment[];
     },
 
     async logout() {
