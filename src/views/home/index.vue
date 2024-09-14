@@ -4,6 +4,12 @@
       <div class="p-4 font-bold text-lg flex justify-center">
         <span>{{ fullName }}</span>
       </div>
+      <div v-if="!user.isAuth" class="flex flex-col justify-center">
+        <span>Please login</span>
+        <router-link to="/login" class="text-teal-500"
+          ><button>Login</button></router-link
+        >
+      </div>
       <div
         v-for="tab in tabs"
         :key="tab.key"
@@ -44,9 +50,10 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const user = useAuthStore();
 const authStore = useAuthStore();
-const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
+const patientStore = usePatientStore();
 const doctorsStore = useDoctorsStore();
 const appointmentsStore = useAppointmentStore();
 
