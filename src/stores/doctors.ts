@@ -17,20 +17,21 @@ export const useDoctorsStore = defineStore("doctors", {
   },
 
   actions: {
-    async fetchDoctors() {
+    async fetchDoctors(): Promise<Doctor[]> {
       this.loading = true;
       try {
         const response = await doctorApi.getAllDoctors();
         this.doctors = response.data;
-        return this.doctors;
+        return this.getDoctors;
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
+      return [] as Doctor[];
     },
 
-    async fetchDoctorsBySpeciality(speciality: Speciality) {
+    async fetchDoctorsBySpeciality(speciality: Speciality): Promise<Doctor[]> {
       this.loading = true;
       try {
         const response = await doctorApi.getDoctorsBySpeciality(speciality);
@@ -41,6 +42,7 @@ export const useDoctorsStore = defineStore("doctors", {
       } finally {
         this.loading = false;
       }
+      return [] as Doctor[];
     },
 
     async logout() {
