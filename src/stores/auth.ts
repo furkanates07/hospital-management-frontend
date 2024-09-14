@@ -30,7 +30,10 @@ export const useAuthStore = defineStore("auth", {
       this.error = error;
     },
 
-    async login(loginData: Login, loginRole: Role.DOCTOR | Role.PATIENT) {
+    async login(
+      loginData: Login,
+      loginRole: Role.DOCTOR | Role.PATIENT
+    ): Promise<void> {
       try {
         const response =
           loginRole === Role.DOCTOR
@@ -72,6 +75,7 @@ export const useAuthStore = defineStore("auth", {
       this.userId = null;
       this.role = null;
       this.error = null;
+      this.selectedTab = "";
     },
   },
 });
