@@ -27,6 +27,10 @@ export const useAppointmentStore = defineStore("appointment", {
       this.appointmentID = id;
     },
 
+    async setAppointment(appointment: Appointment) {
+      this.appointment = appointment;
+    },
+
     async createAppointment(appointmentData: Appointment) {
       this.loading = true;
       try {
@@ -43,23 +47,25 @@ export const useAppointmentStore = defineStore("appointment", {
       }
     },
 
-    async fetchAppointment(id: string) {
+    async fetchAppointment(id: string): Promise<Appointment> {
       this.loading = true;
       try {
         const response = await appointmentApi.getAppointmentById(id);
         this.appointment = response.data;
         this.appointmentID = response.data._id;
+        return this.getAppointment;
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
+      return {} as Appointment;
     },
 
     async getAppointmentIdByPatientIdAndDoctorId(
       patientId: string,
       doctorId: string
-    ) {
+    ): Promise<String | undefined> {
       this.loading = true;
       try {
         const response =
@@ -68,11 +74,13 @@ export const useAppointmentStore = defineStore("appointment", {
             doctorId
           );
         this.appointmentID = response.data;
+        return this.getAppointmentID;
       } catch (err: any) {
         this.error = err.response?.data?.message;
       } finally {
         this.loading = false;
       }
+      return undefined;
     },
 
     async approveAppointment(id: string) {
