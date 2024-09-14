@@ -32,7 +32,7 @@
 
       <div v-if="activeTab === 'contacts'">
         <EmergencyContactsList
-          :contacts="patient.emergencyContact"
+          :contacts="patient.emergencyContact ?? []"
           :isEditing="isEditing"
           @delete-contact="deleteContact"
         />
