@@ -1,5 +1,11 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col items-center py-4">
+    <div v-if="!user.isAuth" class="flex flex-col justify-center">
+      <span>Please login</span>
+      <router-link to="/login" class="text-teal-500"
+        ><button>Login</button></router-link
+      >
+    </div>
     <div class="w-full max-w-2xl relative">
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-teal-500">Examination</h1>
@@ -74,24 +80,32 @@
 </template>
 
 <script setup lang="ts">
-import { Appointment, Patient, UpdatePrescription } from "@/interfaces";
+import {
+  Appointment,
+  Patient,
+  PatientConditions,
+  UpdatePrescription,
+} from "@/interfaces";
 import router from "@/router";
 import { useAppointmentStore } from "@/stores/appointment";
+import { useAuthStore } from "@/stores/auth";
 import { usePatientStore } from "@/stores/patient";
 import { computed, onMounted, ref } from "vue";
 
 const appointmentStore = useAppointmentStore();
 const patientStore = usePatientStore();
+const user = useAuthStore();
 
 const appointment = ref<Appointment | null>(null);
 const patient = ref<Patient | null>(null);
+const patientID = ref<string | null>(null);
 
 onMounted(async () => {
-  appointment.value = await appointmentStore.getAppointment;
-  await patientStore.fetchPatient(appointment.value?.patientId || "");
-  patient.value = await patientStore.getPatient;
-  console.log(appointment.value);
-  console.log(patient.value);
+  const appointmentData = await appointmentStore.getAppointment;
+  appointment.value = appointmentData;
+  patient.value = await patientStore.fetchPatient(appointmentData.patientId);
+
+  patientID.value = patientStore.getUserID;
 });
 
 const patientMedicalRecords = computed(() => ({
@@ -128,14 +142,14 @@ const removeCondition = (key: string, index: number) => {
 
 const saveChanges = async () => {
   try {
-    const updatedConditions = {
+    const updatedConditions: PatientConditions = {
       medicalHistory: patient.value?.medicalHistory || [],
       allergies: patient.value?.allergies || [],
       chronicConditions: patient.value?.chronicConditions || [],
     };
 
     await patientStore.updatePatientConditions(
-      patientStore.getUserID,
+      patientID.value!,
       updatedConditions
     );
 
