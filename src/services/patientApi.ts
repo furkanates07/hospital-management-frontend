@@ -24,7 +24,6 @@ export default {
   },
 
   updatePatientDetails(id: string, data: PatientDetails) {
-    console.log("API Call: Updating patient details", id, data);
     return apiClient.patch(`/patients/${id}`, data);
   },
 
