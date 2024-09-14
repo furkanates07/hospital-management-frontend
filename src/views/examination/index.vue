@@ -88,8 +88,10 @@ const patient = ref<Patient | null>(null);
 
 onMounted(async () => {
   appointment.value = await appointmentStore.getAppointment;
+  await patientStore.fetchPatient(appointment.value?.patientId || "");
   patient.value = await patientStore.getPatient;
   console.log(appointment.value);
+  console.log(patient.value);
 });
 
 const patientMedicalRecords = computed(() => ({
