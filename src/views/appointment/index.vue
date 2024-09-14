@@ -22,6 +22,12 @@
     <div
       class="col-span-5 bg-gray-100 min-h-screen flex flex-col items-center py-4"
     >
+      <div v-if="!user.isAuth" class="flex flex-col justify-center">
+        <span>Please login</span>
+        <router-link to="/login" class="text-teal-500"
+          ><button>Login</button></router-link
+        >
+      </div>
       <div class="w-full max-w-2xl relative">
         <div v-if="selectedDoctor">
           <!-- Back button -->
@@ -142,6 +148,7 @@ import { Status } from "@/enums/status.enum";
 import { Doctor, Slot } from "@/interfaces";
 import { Appointment } from "@/interfaces/appointment";
 import { useAppointmentStore } from "@/stores/appointment";
+import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctor";
 import { useDoctorsStore } from "@/stores/doctors";
 import { usePatientStore } from "@/stores/patient";
@@ -153,6 +160,7 @@ const patientStore = usePatientStore();
 const doctorStore = useDoctorStore();
 const appointmentStore = useAppointmentStore();
 const router = useRouter();
+const user = useAuthStore();
 
 const doctors = ref<Doctor[]>([]);
 const selectedSpeciality = ref<Speciality | null>(null);
