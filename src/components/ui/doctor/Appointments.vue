@@ -107,6 +107,7 @@
 import { Status } from "@/enums/status.enum";
 import { Appointment } from "@/interfaces/appointment";
 import { useAppointmentStore } from "@/stores/appointment";
+import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctor";
 import { usePatientStore } from "@/stores/patient";
 import { computed, onMounted, ref } from "vue";
@@ -114,11 +115,10 @@ import { computed, onMounted, ref } from "vue";
 const doctorStore = useDoctorStore();
 const appointmentStore = useAppointmentStore();
 const patientStore = usePatientStore();
+const user = useAuthStore();
 
 const patientNames = ref<Record<string, string>>({});
-const selectedAppointment = ref<Appointment | null>(null);
 const selectedStatus = ref<string>("");
-const selectedAppointmentId = ref<string>("");
 const loading = ref<boolean>(true);
 
 const status = Object.values(Status);
@@ -203,71 +203,53 @@ const handleAppointmentStatus = async (
   appointment: Appointment,
   action: "approve" | "reject" | "complete"
 ) => {
-  selectedAppointment.value = appointment;
+  appointmentStore.setAppointment(appointment);
+
+  await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
+    appointment.patientId,
+    appointment.doctorId
+  );
+  const appointmentId = appointmentStore.getAppointmentID;
 
   if (
     (action === "approve" || action === "reject") &&
     appointment.status === Status.PENDING
   ) {
-    await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
-      appointment.patientId,
-      appointment.doctorId
-    );
-    selectedAppointmentId.value = appointmentStore.getAppointmentID;
-
     if (action === "approve") {
-      await appointmentStore.approveAppointment(selectedAppointmentId.value);
+      await appointmentStore.approveAppointment(appointmentId);
     } else if (action === "reject") {
-      await appointmentStore.rejectAppointment(selectedAppointmentId.value);
+      await appointmentStore.rejectAppointment(appointmentId);
     }
   } else if (action === "complete" && appointment.status === Status.APPROVED) {
-    await appointmentStore.getAppointmentIdByPatientIdAndDoctorId(
-      appointment.patientId,
-      appointment.doctorId
-    );
-    selectedAppointmentId.value = appointmentStore.getAppointmentID;
-    await appointmentStore.fetchAppointment(selectedAppointmentId.value);
-    await patientStore.fetchPatient(appointment.patientId);
-    await doctorStore.fetchDoctor(appointment.doctorId);
+    await appointmentStore.fetchAppointment(appointmentId);
+
+    if (appointment.patientId) {
+      await patientStore.fetchPatient(appointment.patientId);
+    }
+
+    if (appointment.doctorId) {
+      await doctorStore.fetchDoctor(appointment.doctorId);
+    }
   }
 
   await doctorStore.fetchAppointments(doctorStore.userID);
   fetchPatientData();
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case Status.PENDING:
-      return "yellow-500";
-    case Status.APPROVED:
-      return "blue-500";
-    case Status.REJECTED:
-      return "red-500";
-    case Status.CANCELED:
-      return "gray-500";
-    case Status.COMPLETED:
-      return "green-500";
-    default:
-      return "gray-500";
-  }
+const getStatusProperties = (status: string) => {
+  const statusMap: Record<string, { color: string; textClass: string }> = {
+    [Status.PENDING]: { color: "yellow-500", textClass: "text-yellow-500" },
+    [Status.APPROVED]: { color: "blue-500", textClass: "text-blue-500" },
+    [Status.REJECTED]: { color: "red-500", textClass: "text-red-500" },
+    [Status.CANCELED]: { color: "gray-500", textClass: "text-gray-500" },
+    [Status.COMPLETED]: { color: "green-500", textClass: "text-green-500" },
+  };
+  return statusMap[status] || { color: "gray-500", textClass: "text-gray-500" };
 };
 
-const getStatusClass = (status: string) => {
-  switch (status) {
-    case Status.PENDING:
-      return "text-yellow-500";
-    case Status.APPROVED:
-      return "text-blue-500";
-    case Status.REJECTED:
-      return "text-red-500";
-    case Status.CANCELED:
-      return "text-gray-500";
-    case Status.COMPLETED:
-      return "text-green-500";
-    default:
-      return "text-gray-500";
-  }
-};
+const getStatusColor = (status: string) => getStatusProperties(status).color;
+const getStatusClass = (status: string) =>
+  getStatusProperties(status).textClass;
 </script>
 
 <style scoped></style>
