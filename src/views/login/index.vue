@@ -43,10 +43,10 @@
             <button
               type="button"
               :class="[
-                'py-2 px-4 rounded-lg',
+                'py-2 px-4 rounded-lg border-2',
                 role === 'patient'
-                  ? 'bg-teal-500 text-white'
-                  : 'bg-white text-gray-700',
+                  ? 'bg-teal-500 text-white border-transparent'
+                  : 'bg-white text-teal-500 border-teal-500',
               ]"
               @click="role = Role.PATIENT"
             >
@@ -55,10 +55,10 @@
             <button
               type="button"
               :class="[
-                'py-2 px-4 rounded-lg',
+                'py-2 px-4 rounded-lg border-2',
                 role === 'doctor'
-                  ? 'bg-teal-500 text-white'
-                  : 'bg-white text-gray-700',
+                  ? 'bg-teal-500 text-white border-transparent'
+                  : 'bg-white text-teal-500 border-teal-500',
               ]"
               @click="role = Role.DOCTOR"
             >
@@ -66,6 +66,7 @@
             </button>
           </div>
         </div>
+
         <button
           type="submit"
           class="w-full py-3 px-4 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
