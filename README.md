@@ -1,4 +1,4 @@
-# Hospital Managament Systems Backend Services
+# Hospital Managament Systems Frontend
 
 This is the frontend project for the Hospital Management System, which has been developed using **Vue.js**, **Pinia**, **Tailwind CSS**, and **TypeScript**. The backend of this project was built using **NestJS**.
 
