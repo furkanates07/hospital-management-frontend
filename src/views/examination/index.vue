@@ -60,7 +60,7 @@
 
           <textarea
             v-model="updatedPrescription"
-            placeholder="Update prescription details"
+            placeholder="Prescription details"
             rows="4"
             class="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-300"
           ></textarea>
